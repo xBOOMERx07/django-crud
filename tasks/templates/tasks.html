@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Tasks</h1>
+
+{% if tasks %}
+<div class="row">
+    {% for task in tasks %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {{ task.title }}
+                    {% if task.important %}
+                    <span class="badge bg-danger">Important</span>
+                    {% endif %}
+                </h5>
+                <p class="card-text">{{ task.description }}</p>
+                <p class="text-muted">Created: {{ task.created|date:'M d, Y' }}</p>
+                <a href="{% url 'task_detail' task.id %}" class="btn btn-primary">View Detail</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <h4>No tasks yet!</h4>
+    <a href="{% url 'create_task' %}" class="btn btn-primary">Create your first task</a>
+</div>
+{% endif %}
+{% endblock %}
