@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -555,8 +556,8 @@
                                     </div>
                                     <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">{{ proyecto.descripcion }}</p>
                                     <div class="tech-tags">
-                                        {% for tech in proyecto.tecnologias.split:',' %}
-                                            <span class="tech-tag">{{ tech|trim }}</span>
+                                        {% for tech in proyecto.tecnologias|split:',' %}
+                                            <span class="tech-tag">{{ tech }}</span>
                                         {% endfor %}
                                     </div>
                                     <div class="project-links">
