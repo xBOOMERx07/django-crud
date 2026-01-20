@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i data-lucide="graduation-cap" style="width: 40px; height: 40px; vertical-align: middle;"></i>
+                    Educación
+                </h1>
+                <div>
+                    <a href="{% url 'home' %}" class="btn btn-secondary me-2">
+                        <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                        Volver
+                    </a>
+                    <a href="{% url 'crear_educacion' %}" class="btn btn-primary">
+                        <i data-lucide="plus" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                        Nueva Educación
+                    </a>
+                </div>
+            </div>
+
+            {% if educacion %}
+                <div class="row g-4">
+                    {% for edu in educacion %}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h4 class="card-title mb-2">{{ edu.titulo }}</h4>
+                                        <h5 style="color: var(--text-secondary);">
+                                            <i data-lucide="school" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                                            {{ edu.institucion }}
+                                        </h5>
+                                    </div>
+                                    <div>
+                                        {% if edu.actualmente_estudiando %}
+                                            <span class="badge bg-success">
+                                                <i data-lucide="book-open" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                                En Curso
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p style="color: var(--text-secondary);">
+                                        <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                        {{ edu.fecha_inicio|date:"F Y" }} - 
+                                        {% if edu.actualmente_estudiando %}
+                                            Presente
+                                        {% else %}
+                                            {{ edu.fecha_fin|date:"F Y" }}
+                                        {% endif %}
+                                        {% if edu.ubicacion %}
+                                            <span class="ms-3">
+                                                <i data-lucide="map-pin" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                                {{ edu.ubicacion }}
+                                            </span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                
+                                {% if edu.descripcion %}
+                                    <p class="card-text mb-3">{{ edu.descripcion|linebreaks }}</p>
+                                {% endif %}
+                                
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'editar_educacion' edu.id %}" class="btn btn-primary btn-sm">
+                                        <i data-lucide="edit" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Editar
+                                    </a>
+                                    <a href="{% url 'eliminar_educacion' edu.id %}" class="btn btn-danger btn-sm">
+                                        <i data-lucide="trash-2" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i data-lucide="graduation-cap" style="width: 64px; height: 64px; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h4 style="color: var(--text-secondary);">No hay educación registrada</h4>
+                        <p style="color: var(--text-secondary);">Agrega tu formación académica para fortalecer tu CV.</p>
+                        <a href="{% url 'crear_educacion' %}" class="btn btn-primary mt-3">
+                            <i data-lucide="plus" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                            Agregar Primera Educación
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

@@ -1,26 +1,79 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-4 offset-md-4">
-        <h1>Sign In</h1>
-
-        {% if error %}
-        <div class="alert alert-danger">{{ error }}</div>
-        {% endif %}
-
-        <form method="POST">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="username" class="form-label">Username:</label>
-                <input type="text" name="username" class="form-control" required>
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-lg-5 col-md-7">
+            <div class="card">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i data-lucide="user-circle" style="width: 64px; height: 64px; margin-bottom: 1rem;"></i>
+                        <h2 class="mb-2">Iniciar Sesión</h2>
+                        <p style="color: var(--text-secondary);">Accede a tu panel de control</p>
+                    </div>
+                    
+                    {% if error %}
+                        <div class="alert alert-danger mb-4">
+                            <i data-lucide="alert-circle" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i data-lucide="user" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Usuario
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="username" 
+                                   name="username" 
+                                   placeholder="Ingresa tu usuario"
+                                   required
+                                   autofocus>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="form-label">
+                                <i data-lucide="lock" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Contraseña
+                            </label>
+                            <input type="password" 
+                                   class="form-control" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Ingresa tu contraseña"
+                                   required>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="log-in" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                Iniciar Sesión
+                            </button>
+                        </div>
+                        
+                        <div class="text-center">
+                            <p style="color: var(--text-secondary);">
+                                ¿No tienes cuenta? 
+                                <a href="{% url 'signup' %}" style="color: var(--accent-cyan); text-decoration: none; font-weight: 600;">
+                                    Regístrate aquí
+                                </a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Sign In</button>
-        </form>
+        </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
 {% endblock %}

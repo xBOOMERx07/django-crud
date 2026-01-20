@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="mb-4">
+                <a href="{% url 'lista_experiencias' %}" class="btn btn-secondary">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                    Volver a Experiencias
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i data-lucide="briefcase" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                        {{ action }} Experiencia Laboral
+                    </h2>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.puesto.id_for_label }}" class="form-label">
+                                    <i data-lucide="user-check" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Puesto / Cargo *
+                                </label>
+                                {{ form.puesto }}
+                                <small class="text-muted">Ej: Desarrollador Full Stack</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.empresa.id_for_label }}" class="form-label">
+                                    <i data-lucide="building" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Empresa *
+                                </label>
+                                {{ form.empresa }}
+                                <small class="text-muted">Ej: Tech Solutions S.A.</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.ubicacion.id_for_label }}" class="form-label">
+                                <i data-lucide="map-pin" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Ubicación
+                            </label>
+                            {{ form.ubicacion }}
+                            <small class="text-muted">Ej: Quito, Ecuador (Remoto)</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha_inicio.id_for_label }}" class="form-label">
+                                    <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Fecha de Inicio *
+                                </label>
+                                {{ form.fecha_inicio }}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha_fin.id_for_label }}" class="form-label">
+                                    <i data-lucide="calendar-check" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Fecha de Fin
+                                </label>
+                                {{ form.fecha_fin }}
+                                <small class="text-muted">Deja en blanco si es tu trabajo actual</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="form-check">
+                                {{ form.actualmente_trabajando }}
+                                <label class="form-check-label" for="{{ form.actualmente_trabajando.id_for_label }}">
+                                    <i data-lucide="clock" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Actualmente trabajo aquí
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                                <i data-lucide="file-text" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Descripción de Responsabilidades *
+                            </label>
+                            {{ form.descripcion }}
+                            <small class="text-muted">Describe tus principales responsabilidades y logros</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.orden.id_for_label }}" class="form-label">
+                                <i data-lucide="list-ordered" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Orden de Visualización
+                            </label>
+                            {{ form.orden }}
+                            <small class="text-muted">Número para ordenar (0 = primero)</small>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                Guardar Experiencia
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+        
+        // Auto-desactivar fecha fin si marca "actualmente trabajando"
+        const actualmenteCheckbox = document.querySelector('input[name="actualmente_trabajando"]');
+        const fechaFinInput = document.querySelector('input[name="fecha_fin"]');
+        
+        if (actualmenteCheckbox && fechaFinInput) {
+            actualmenteCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    fechaFinInput.value = '';
+                    fechaFinInput.disabled = true;
+                } else {
+                    fechaFinInput.disabled = false;
+                }
+            });
+            
+            // Estado inicial
+            if (actualmenteCheckbox.checked) {
+                fechaFinInput.disabled = true;
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i data-lucide="award" style="width: 40px; height: 40px; vertical-align: middle;"></i>
+                    Certificaciones
+                </h1>
+                <div>
+                    <a href="{% url 'home' %}" class="btn btn-secondary me-2">
+                        <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                        Volver
+                    </a>
+                    <a href="{% url 'crear_certificacion' %}" class="btn btn-primary">
+                        <i data-lucide="plus" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                        Nueva Certificación
+                    </a>
+                </div>
+            </div>
+
+            {% if certificaciones %}
+                <div class="row g-4">
+                    {% for cert in certificaciones %}
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="me-3">
+                                        <i data-lucide="award" style="width: 48px; height: 48px; color: var(--accent-purple);"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h4 class="card-title mb-2">{{ cert.nombre }}</h4>
+                                        <h6 style="color: var(--text-secondary);">
+                                            <i data-lucide="building" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                            {{ cert.organizacion }}
+                                        </h6>
+                                    </div>
+                                </div>
+                                
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                    <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Obtenido en {{ cert.fecha_obtencion|date:"F Y" }}
+                                </p>
+                                
+                                {% if cert.url_credencial %}
+                                    <a href="{{ cert.url_credencial }}" target="_blank" class="btn btn-sm btn-outline-primary mb-3">
+                                        <i data-lucide="external-link" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Ver Credencial
+                                    </a>
+                                {% endif %}
+                                
+                                <div class="d-flex gap-2 mt-3">
+                                    <a href="{% url 'editar_certificacion' cert.id %}" class="btn btn-primary btn-sm flex-grow-1">
+                                        <i data-lucide="edit" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Editar
+                                    </a>
+                                    <a href="{% url 'eliminar_certificacion' cert.id %}" class="btn btn-danger btn-sm">
+                                        <i data-lucide="trash-2" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i data-lucide="award" style="width: 64px; height: 64px; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h4 style="color: var(--text-secondary);">No hay certificaciones registradas</h4>
+                        <p style="color: var(--text-secondary);">Agrega tus certificaciones profesionales y cursos completados.</p>
+                        <a href="{% url 'crear_certificacion' %}" class="btn btn-primary mt-3">
+                            <i data-lucide="plus" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                            Agregar Primera Certificación
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

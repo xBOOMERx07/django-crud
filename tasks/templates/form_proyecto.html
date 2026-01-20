@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="mb-4">
+                <a href="{% url 'lista_proyectos' %}" class="btn btn-secondary">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                    Volver a Proyectos
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i data-lucide="rocket" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                        {{ action }} Proyecto
+                    </h2>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                                <i data-lucide="folder" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Nombre del Proyecto *
+                            </label>
+                            {{ form.nombre }}
+                            <small class="text-muted">Ej: Sistema de Gestión de Inventario</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                                <i data-lucide="file-text" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Descripción *
+                            </label>
+                            {{ form.descripcion }}
+                            <small class="text-muted">Describe el proyecto, objetivos y resultados obtenidos</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.tecnologias.id_for_label }}" class="form-label">
+                                <i data-lucide="code" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Tecnologías Utilizadas *
+                            </label>
+                            {{ form.tecnologias }}
+                            <small class="text-muted">Separa con comas. Ej: Python, Django, PostgreSQL, React</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.url_proyecto.id_for_label }}" class="form-label">
+                                    <i data-lucide="external-link" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    URL del Proyecto (Demo)
+                                </label>
+                                {{ form.url_proyecto }}
+                                <small class="text-muted">Link a la demo o sitio web del proyecto</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.url_github.id_for_label }}" class="form-label">
+                                    <i data-lucide="github" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    URL de GitHub
+                                </label>
+                                {{ form.url_github }}
+                                <small class="text-muted">Link al repositorio del código</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha.id_for_label }}" class="form-label">
+                                    <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Fecha del Proyecto *
+                                </label>
+                                {{ form.fecha }}
+                                <small class="text-muted">Fecha de finalización o última actualización</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label d-block">
+                                    <i data-lucide="star" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Destacar Proyecto
+                                </label>
+                                <div class="form-check">
+                                    {{ form.destacado }}
+                                    <label class="form-check-label" for="{{ form.destacado.id_for_label }}">
+                                        Marcar como proyecto destacado
+                                    </label>
+                                </div>
+                                <small class="text-muted">Los proyectos destacados aparecen primero en tu CV</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                Guardar Proyecto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

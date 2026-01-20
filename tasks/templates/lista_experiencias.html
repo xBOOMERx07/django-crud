@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i data-lucide="briefcase" style="width: 40px; height: 40px; vertical-align: middle;"></i>
+                    Experiencia Laboral
+                </h1>
+                <div>
+                    <a href="{% url 'home' %}" class="btn btn-secondary me-2">
+                        <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                        Volver
+                    </a>
+                    <a href="{% url 'crear_experiencia' %}" class="btn btn-primary">
+                        <i data-lucide="plus" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                        Nueva Experiencia
+                    </a>
+                </div>
+            </div>
+
+            {% if experiencias %}
+                <div class="row g-4">
+                    {% for exp in experiencias %}
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h4 class="card-title mb-2">{{ exp.puesto }}</h4>
+                                        <h5 style="color: var(--text-secondary);">
+                                            <i data-lucide="building" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                                            {{ exp.empresa }}
+                                        </h5>
+                                    </div>
+                                    <div>
+                                        {% if exp.actualmente_trabajando %}
+                                            <span class="badge bg-success">
+                                                <i data-lucide="clock" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                                Actualmente
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <p style="color: var(--text-secondary);">
+                                        <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                        {{ exp.fecha_inicio|date:"F Y" }} - 
+                                        {% if exp.actualmente_trabajando %}
+                                            Presente
+                                        {% else %}
+                                            {{ exp.fecha_fin|date:"F Y" }}
+                                        {% endif %}
+                                        {% if exp.ubicacion %}
+                                            <span class="ms-3">
+                                                <i data-lucide="map-pin" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                                {{ exp.ubicacion }}
+                                            </span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                
+                                <p class="card-text mb-3">{{ exp.descripcion|linebreaks }}</p>
+                                
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'editar_experiencia' exp.id %}" class="btn btn-primary btn-sm">
+                                        <i data-lucide="edit" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Editar
+                                    </a>
+                                    <a href="{% url 'eliminar_experiencia' exp.id %}" class="btn btn-danger btn-sm">
+                                        <i data-lucide="trash-2" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i data-lucide="briefcase" style="width: 64px; height: 64px; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h4 style="color: var(--text-secondary);">No hay experiencias laborales registradas</h4>
+                        <p style="color: var(--text-secondary);">Agrega tu primera experiencia laboral para comenzar a construir tu CV.</p>
+                        <a href="{% url 'crear_experiencia' %}" class="btn btn-primary mt-3">
+                            <i data-lucide="plus" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                            Agregar Primera Experiencia
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}
