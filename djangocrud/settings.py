@@ -103,3 +103,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Configuración de archivos media (imágenes)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+# Configuración para Render
+import os
+if os.environ.get('RENDER'):
+    ALLOWED_HOSTS = [os.environ.get('RENDER_EXTERNAL_HOSTNAME')]
+    DEBUG = False
+else:
+    ALLOWED_HOSTS = ['*']
+    DEBUG = True

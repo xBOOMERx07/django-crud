@@ -9,15 +9,15 @@
                 Panel de Control
             </h1>
             
-            {% if info_personal %}
+            {% if datos_personales %}
                 <div class="alert alert-success mb-4">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <h4 class="mb-2">
                                 <i data-lucide="check-circle" style="width: 24px; height: 24px; vertical-align: middle;"></i>
-                                ¡Bienvenido/a, {{ info_personal.nombre_completo }}!
+                                ¡Bienvenido/a, {{ datos_personales.nombre_completo }}!
                             </h4>
-                            <p class="mb-3" style="font-size: 1.1rem;">{{ info_personal.titulo_profesional }}</p>
+                            <p class="mb-3" style="font-size: 1.1rem;">{{ datos_personales.descripcion_perfil }}</p>
                             <a href="{% url 'cv_publico' user.username %}" class="btn btn-primary" target="_blank">
                                 <i data-lucide="eye" style="width: 18px; height: 18px; vertical-align: middle;"></i>
                                 Ver mi CV Público
@@ -31,8 +31,8 @@
                         <i data-lucide="alert-triangle" style="width: 24px; height: 24px; vertical-align: middle;"></i>
                         Completa tu información personal
                     </h4>
-                    <p class="mb-3">Primero debes agregar tu información personal para comenzar a construir tu CV profesional.</p>
-                    <a href="{% url 'editar_info_personal' %}" class="btn btn-warning">
+                    <p class="mb-3">Primero debes agregar tu información personal para comenzar.</p>
+                    <a href="{% url 'editar_datos_personales' %}" class="btn btn-warning">
                         <i data-lucide="edit" style="width: 18px; height: 18px; vertical-align: middle;"></i>
                         Completar Perfil Ahora
                     </a>
@@ -40,18 +40,18 @@
             {% endif %}
             
             <div class="row mt-5 g-4">
-                <!-- Información Personal -->
+                <!-- Datos Personales -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100">
                         <div class="card-body">
                             <div class="mb-3">
                                 <i data-lucide="user-circle" style="width: 48px; height: 48px; color: var(--accent-cyan);"></i>
                             </div>
-                            <h5 class="card-title">Información Personal</h5>
-                            <p class="card-text">Edita tu nombre, título profesional, datos de contacto y más.</p>
-                            <a href="{% url 'editar_info_personal' %}" class="btn btn-primary w-100 mt-3">
+                            <h5 class="card-title">Datos Personales</h5>
+                            <p class="card-text">Edita tu información básica, contacto y datos de identidad.</p>
+                            <a href="{% url 'editar_datos_personales' %}" class="btn btn-primary w-100 mt-3">
                                 <i data-lucide="edit-3" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                Editar Perfil
+                                Editar
                             </a>
                         </div>
                     </div>
@@ -65,27 +65,27 @@
                                 <i data-lucide="briefcase" style="width: 48px; height: 48px; color: var(--accent-purple);"></i>
                             </div>
                             <h5 class="card-title">Experiencia Laboral</h5>
-                            <p class="card-text">Gestiona tus trabajos anteriores y experiencia profesional.</p>
+                            <p class="card-text">Gestiona tu historial profesional y cargos desempeñados.</p>
                             <a href="{% url 'lista_experiencias' %}" class="btn btn-primary w-100 mt-3">
                                 <i data-lucide="briefcase" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                Administrar ({{ experiencias.count }})
+                                Administrar ({{ total_experiencias }})
                             </a>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Educación -->
+                <!-- Cursos -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100">
                         <div class="card-body">
                             <div class="mb-3">
-                                <i data-lucide="graduation-cap" style="width: 48px; height: 48px; color: var(--accent-pink);"></i>
+                                <i data-lucide="book-open" style="width: 48px; height: 48px; color: var(--accent-pink);"></i>
                             </div>
-                            <h5 class="card-title">Educación</h5>
-                            <p class="card-text">Administra tu formación académica, títulos y certificados.</p>
-                            <a href="{% url 'lista_educacion' %}" class="btn btn-primary w-100 mt-3">
+                            <h5 class="card-title">Cursos Realizados</h5>
+                            <p class="card-text">Administra tus capacitaciones y formación adicional.</p>
+                            <a href="{% url 'lista_cursos' %}" class="btn btn-primary w-100 mt-3">
                                 <i data-lucide="book-open" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                Administrar ({{ educacion.count }})
+                                Administrar ({{ total_cursos }})
                             </a>
                         </div>
                     </div>
@@ -99,55 +99,39 @@
                                 <i data-lucide="zap" style="width: 48px; height: 48px; color: var(--accent-cyan);"></i>
                             </div>
                             <h5 class="card-title">Habilidades</h5>
-                            <p class="card-text">Define tus competencias técnicas y niveles de dominio.</p>
+                            <p class="card-text">Define tus competencias técnicas y profesionales.</p>
                             <a href="{% url 'lista_habilidades' %}" class="btn btn-primary w-100 mt-3">
                                 <i data-lucide="cpu" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                Administrar
+                                Administrar ({{ total_habilidades }})
                             </a>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Proyectos -->
+                <!-- Panel Admin (si eres superusuario) -->
+                {% if user.is_superuser %}
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100">
+                    <div class="card h-100" style="border-color: var(--accent-pink);">
                         <div class="card-body">
                             <div class="mb-3">
-                                <i data-lucide="rocket" style="width: 48px; height: 48px; color: var(--accent-purple);"></i>
+                                <i data-lucide="shield" style="width: 48px; height: 48px; color: var(--accent-pink);"></i>
                             </div>
-                            <h5 class="card-title">Proyectos</h5>
-                            <p class="card-text">Muestra tus proyectos más destacados y trabajos realizados.</p>
-                            <a href="{% url 'lista_proyectos' %}" class="btn btn-primary w-100 mt-3">
-                                <i data-lucide="folder" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                Administrar
+                            <h5 class="card-title">Panel Admin</h5>
+                            <p class="card-text">Acceso completo al panel de administración.</p>
+                            <a href="/admin/" class="btn btn-warning w-100 mt-3" target="_blank">
+                                <i data-lucide="settings" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Ir al Admin
                             </a>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Certificaciones -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <i data-lucide="award" style="width: 48px; height: 48px; color: var(--accent-pink);"></i>
-                            </div>
-                            <h5 class="card-title">Certificaciones</h5>
-                            <p class="card-text">Registra tus certificados profesionales y cursos completados.</p>
-                            <a href="{% url 'lista_certificaciones' %}" class="btn btn-primary w-100 mt-3">
-                                <i data-lucide="award" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                Administrar
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Reinicializar iconos después de cargar el contenido
     document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
     });

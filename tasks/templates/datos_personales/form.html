@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="mb-4">
+                <a href="{% url 'home' %}" class="btn btn-secondary">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                    Volver al Dashboard
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i data-lucide="user-circle" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                        Datos Personales
+                    </h2>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="user" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Nombres *
+                                </label>
+                                <input type="text" class="form-control" name="nombres" value="{{ datos.nombres|default:'' }}" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="user" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Apellidos *
+                                </label>
+                                <input type="text" class="form-control" name="apellidos" value="{{ datos.apellidos|default:'' }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="credit-card" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Número de Cédula *
+                                </label>
+                                <input type="text" class="form-control" name="numero_cedula" value="{{ datos.numero_cedula|default:'' }}" maxlength="10" required>
+                                <small class="text-muted">10 dígitos</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="user-check" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Sexo *
+                                </label>
+                                <select class="form-control" name="sexo" required>
+                                    <option value="H" {% if datos.sexo == 'H' %}selected{% endif %}>Hombre</option>
+                                    <option value="M" {% if datos.sexo == 'M' %}selected{% endif %}>Mujer</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Fecha de Nacimiento *
+                                </label>
+                                <input type="date" class="form-control" name="fecha_nacimiento" value="{{ datos.fecha_nacimiento|date:'Y-m-d'|default:'' }}" required>
+                                <small class="text-muted">Edad: 18-70 años</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="heart" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Estado Civil
+                                </label>
+                                <select class="form-control" name="estado_civil">
+                                    <option value="Soltero/a" {% if datos.estado_civil == 'Soltero/a' %}selected{% endif %}>Soltero/a</option>
+                                    <option value="Casado/a" {% if datos.estado_civil == 'Casado/a' %}selected{% endif %}>Casado/a</option>
+                                    <option value="Divorciado/a" {% if datos.estado_civil == 'Divorciado/a' %}selected{% endif %}>Divorciado/a</option>
+                                    <option value="Viudo/a" {% if datos.estado_civil == 'Viudo/a' %}selected{% endif %}>Viudo/a</option>
+                                    <option value="Unión Libre" {% if datos.estado_civil == 'Unión Libre' %}selected{% endif %}>Unión Libre</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="phone" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Teléfono
+                                </label>
+                                <input type="text" class="form-control" name="telefono_convencional" value="{{ datos.telefono_convencional|default:'' }}">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="mail" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Email Personal
+                                </label>
+                                <input type="email" class="form-control" name="email_personal" value="{{ datos.email_personal|default:'' }}">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                Guardar Información
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}
