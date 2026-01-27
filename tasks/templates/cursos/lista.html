@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i data-lucide="book-open" style="width: 48px; height: 48px; vertical-align: middle;"></i>
+                    Cursos Realizados
+                </h1>
+                <div>
+                    <a href="{% url 'home' %}" class="btn btn-secondary me-2">
+                        <i data-lucide="arrow-left" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                        Volver
+                    </a>
+                    <a href="{% url 'crear_curso' %}" class="btn btn-primary">
+                        <i data-lucide="plus" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                        Nuevo Curso
+                    </a>
+                </div>
+            </div>
+            
+            {% if cursos %}
+            <div class="row g-4">
+                {% for curso in cursos %}
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="mb-2">{{ curso.nombre_curso }}</h4>
+                            <p class="mb-2" style="color: var(--accent-purple);">
+                                <i data-lucide="building" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                                <strong>{{ curso.entidad_patrocinadora }}</strong>
+                            </p>
+                            <p class="mb-2" style="color: var(--text-secondary);">
+                                <i data-lucide="clock" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                {{ curso.total_horas }} horas
+                            </p>
+                            <p class="mb-2" style="color: var(--text-secondary);">
+                                <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                {{ curso.fecha_inicio|date:"d/m/Y" }}
+                                {% if curso.fecha_fin %} - {{ curso.fecha_fin|date:"d/m/Y" }}{% endif %}
+                            </p>
+                            <p class="mb-3">{{ curso.descripcion_curso|truncatewords:20 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex gap-2">
+                                    {% if curso.activar_para_que_se_vea_en_front %}
+                                    <span class="badge bg-success">
+                                        <i data-lucide="eye" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Visible
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">
+                                        <i data-lucide="eye-off" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Oculto
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if curso.ruta_certificado %}
+                                    <span class="badge bg-info">
+                                        <i data-lucide="award" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Certificado
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-warning text-center">
+                <h4>
+                    <i data-lucide="alert-circle" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                </h4>
+                <p>No tienes cursos registrados aún.</p>
+                <a href="{% url 'crear_curso' %}" class="btn btn-primary">
+                    <i data-lucide="plus" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                    Agregar Primer Curso
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

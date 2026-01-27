@@ -5,21 +5,15 @@
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <div class="card" style="border-color: var(--accent-pink);">
-                <div class="card-body p-5 text-center">
+                <div class="card-body p-4 text-center">
                     <div class="mb-4">
                         <i data-lucide="alert-triangle" style="width: 64px; height: 64px; color: var(--accent-pink);"></i>
                     </div>
                     
                     <h2 class="mb-3">¿Estás seguro?</h2>
-                    
-                    <p style="color: var(--text-secondary); font-size: 1.1rem;">
-                        Estás a punto de eliminar {{ tipo }}:
+                    <p class="mb-4" style="font-size: 1.1rem; color: var(--text-secondary);">
+                        Estás a punto de eliminar {{ tipo }}: <strong>{{ objeto }}</strong>
                     </p>
-                    
-                    <div class="alert alert-warning my-4">
-                        <strong>{{ objeto }}</strong>
-                    </div>
-                    
                     <p style="color: var(--text-secondary);">
                         Esta acción no se puede deshacer.
                     </p>
@@ -29,10 +23,10 @@
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-danger btn-lg">
                                 <i data-lucide="trash-2" style="width: 20px; height: 20px; vertical-align: middle;"></i>
-                                Sí, Eliminar Definitivamente
+                                Sí, Eliminar
                             </button>
                             <a href="javascript:history.back()" class="btn btn-secondary btn-lg">
-                                <i data-lucide="arrow-left" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                <i data-lucide="x" style="width: 20px; height: 20px; vertical-align: middle;"></i>
                                 Cancelar
                             </a>
                         </div>

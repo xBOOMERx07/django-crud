@@ -171,6 +171,14 @@ def editar_datos_personales(request):
             datos.fecha_nacimiento = request.POST.get('fecha_nacimiento')
             datos.telefono_convencional = request.POST.get('telefono_convencional', '')
             datos.email_personal = request.POST.get('email_personal', '')
+            datos.estado_civil = request.POST.get('estado_civil', 'Soltero/a')
+            datos.descripcion_perfil = request.POST.get('descripcion_perfil', '')
+            datos.perfil_activo = request.POST.get('perfil_activo') == 'on'
+            
+            # Manejar foto de perfil
+            if request.FILES.get('foto_perfil'):
+                datos.foto_perfil = request.FILES['foto_perfil']
+            
             datos.save()
         else:
             # Crear
@@ -183,8 +191,15 @@ def editar_datos_personales(request):
                 fecha_nacimiento=request.POST.get('fecha_nacimiento'),
                 telefono_convencional=request.POST.get('telefono_convencional', ''),
                 email_personal=request.POST.get('email_personal', ''),
-                estado_civil=request.POST.get('estado_civil', 'Soltero/a')
+                estado_civil=request.POST.get('estado_civil', 'Soltero/a'),
+                descripcion_perfil=request.POST.get('descripcion_perfil', ''),
+                perfil_activo=request.POST.get('perfil_activo') == 'on'
             )
+            
+            # Manejar foto de perfil en creación
+            if request.FILES.get('foto_perfil'):
+                datos.foto_perfil = request.FILES['foto_perfil']
+                datos.save()
         
         return redirect('home')
     

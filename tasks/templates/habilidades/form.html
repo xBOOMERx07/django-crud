@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="mb-4">
+                <a href="{% url 'lista_habilidades' %}" class="btn btn-secondary">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                    Volver a la Lista
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i data-lucide="zap" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                        {{ action|default:"Crear" }} Habilidad
+                    </h2>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i data-lucide="code" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Nombre de la Habilidad *
+                            </label>
+                            <input type="text" class="form-control" name="nombre" 
+                                   placeholder="Ej: Python, Django, React, Liderazgo, etc." required>
+                            <small class="text-muted">Tecnología, idioma, habilidad blanda, etc.</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i data-lucide="bar-chart" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Nivel de Dominio *
+                            </label>
+                            <select class="form-control" name="nivel" required>
+                                <option value="basico">Básico</option>
+                                <option value="intermedio">Intermedio</option>
+                                <option value="avanzado">Avanzado</option>
+                                <option value="experto">Experto</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i data-lucide="tag" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Categoría (Opcional)
+                            </label>
+                            <input type="text" class="form-control" name="categoria" 
+                                   placeholder="Ej: Lenguajes de Programación, Diseño, Idiomas">
+                            <small class="text-muted">Agrupa tus habilidades por tipo</small>
+                        </div>
+                        
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" name="activar_para_que_se_vea_en_front" 
+                                   id="visible" checked>
+                            <label class="form-check-label" for="visible">
+                                <i data-lucide="eye" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Mostrar en CV Público
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                Guardar Habilidad
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tips -->
+            <div class="card mt-4" style="border-color: var(--accent-cyan);">
+                <div class="card-body">
+                    <h5 class="mb-3">
+                        <i data-lucide="lightbulb" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
+                        Tips para agregar habilidades
+                    </h5>
+                    <ul style="color: var(--text-secondary);">
+                        <li>Sé específico: "Python" en vez de "Programación"</li>
+                        <li>Incluye tecnologías, herramientas y frameworks que dominas</li>
+                        <li>No olvides habilidades blandas: liderazgo, trabajo en equipo, etc.</li>
+                        <li>Agrupa por categorías para mejor organización</li>
+                        <li>Sé honesto con tu nivel de dominio</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

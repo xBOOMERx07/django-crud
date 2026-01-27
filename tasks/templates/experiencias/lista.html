@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i data-lucide="briefcase" style="width: 48px; height: 48px; vertical-align: middle;"></i>
+                    Experiencia Laboral
+                </h1>
+                <div>
+                    <a href="{% url 'home' %}" class="btn btn-secondary me-2">
+                        <i data-lucide="arrow-left" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                        Volver
+                    </a>
+                    <a href="{% url 'crear_experiencia' %}" class="btn btn-primary">
+                        <i data-lucide="plus" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                        Nueva Experiencia
+                    </a>
+                </div>
+            </div>
+            
+            {% if experiencias %}
+            <div class="row g-4">
+                {% for exp in experiencias %}
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h4 class="mb-2">{{ exp.cargo_desempenado }}</h4>
+                                    <p class="mb-2" style="color: var(--accent-cyan);">
+                                        <i data-lucide="building" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                                        <strong>{{ exp.nombre_empresa }}</strong>
+                                        {% if exp.lugar_empresa %} - {{ exp.lugar_empresa }}{% endif %}
+                                    </p>
+                                    <p class="mb-2" style="color: var(--text-secondary);">
+                                        <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                        {{ exp.fecha_inicio_gestion|date:"d/m/Y" }} - 
+                                        {% if exp.actualmente_trabajando %}
+                                            <span class="badge bg-primary">Actualidad</span>
+                                        {% else %}
+                                            {{ exp.fecha_fin_gestion|date:"d/m/Y" }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="mb-3" style="white-space: pre-line;">{{ exp.descripcion_funciones|truncatewords:30 }}</p>
+                                    
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        {% if exp.activar_para_que_se_vea_en_front %}
+                                        <span class="badge bg-success">
+                                            <i data-lucide="eye" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                            Visible
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">
+                                            <i data-lucide="eye-off" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                            Oculto
+                                        </span>
+                                        {% endif %}
+                                        
+                                        {% if exp.ruta_certificado %}
+                                        <span class="badge bg-info">
+                                            <i data-lucide="file-check" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                            Con certificado
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="ms-3">
+                                    <a href="{% url 'eliminar_experiencia' exp.pk %}" class="btn btn-danger btn-sm">
+                                        <i data-lucide="trash-2" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                        Eliminar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-warning text-center">
+                <h4>
+                    <i data-lucide="alert-circle" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                </h4>
+                <p>No tienes experiencias laborales registradas aún.</p>
+                <a href="{% url 'crear_experiencia' %}" class="btn btn-primary">
+                    <i data-lucide="plus" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                    Agregar Primera Experiencia
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

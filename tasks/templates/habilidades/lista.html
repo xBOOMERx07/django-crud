@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i data-lucide="zap" style="width: 48px; height: 48px; vertical-align: middle;"></i>
+                    Habilidades
+                </h1>
+                <div>
+                    <a href="{% url 'home' %}" class="btn btn-secondary me-2">
+                        <i data-lucide="arrow-left" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                        Volver
+                    </a>
+                    <a href="{% url 'crear_habilidad' %}" class="btn btn-primary">
+                        <i data-lucide="plus" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                        Nueva Habilidad
+                    </a>
+                </div>
+            </div>
+            
+            {% if habilidades %}
+            <div class="row g-3">
+                {% for hab in habilidades %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-0">{{ hab.nombre }}</h5>
+                                <a href="{% url 'eliminar_habilidad' hab.pk %}" class="btn btn-danger btn-sm">
+                                    <i data-lucide="trash-2" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                </a>
+                            </div>
+                            
+                            <div class="mb-2">
+                                <span class="badge 
+                                    {% if hab.nivel == 'basico' %}bg-secondary
+                                    {% elif hab.nivel == 'intermedio' %}bg-info
+                                    {% elif hab.nivel == 'avanzado' %}bg-warning
+                                    {% else %}bg-primary{% endif %}">
+                                    {{ hab.get_nivel_display }}
+                                </span>
+                            </div>
+                            
+                            {% if hab.categoria %}
+                            <p class="mb-2" style="color: var(--text-secondary);">
+                                <i data-lucide="tag" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                {{ hab.categoria }}
+                            </p>
+                            {% endif %}
+                            
+                            <div class="mt-2">
+                                {% if hab.activar_para_que_se_vea_en_front %}
+                                <span class="badge bg-success">
+                                    <i data-lucide="eye" style="width: 12px; height: 12px; vertical-align: middle;"></i>
+                                    Visible
+                                </span>
+                                {% else %}
+                                <span class="badge bg-secondary">
+                                    <i data-lucide="eye-off" style="width: 12px; height: 12px; vertical-align: middle;"></i>
+                                    Oculto
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-warning text-center">
+                <h4>
+                    <i data-lucide="alert-circle" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                </h4>
+                <p>No tienes habilidades registradas aún.</p>
+                <a href="{% url 'crear_habilidad' %}" class="btn btn-primary">
+                    <i data-lucide="plus" style="width: 18px; height: 18px; vertical-align: middle;"></i>
+                    Agregar Primera Habilidad
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

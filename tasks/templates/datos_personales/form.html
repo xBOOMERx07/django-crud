@@ -18,8 +18,63 @@
                         Datos Personales
                     </h2>
                     
-                    <form method="POST">
+                    <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
+                        
+                        <!-- FOTO DE PERFIL -->
+                        <div class="mb-4 text-center">
+                            <label class="form-label">
+                                <i data-lucide="camera" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Foto de Perfil
+                            </label>
+                            
+                            <!-- Preview de la foto actual -->
+                            <div id="preview-container" class="mb-3">
+                                {% if datos.foto_perfil %}
+                                <img id="preview-image" src="{{ datos.foto_perfil.url }}" alt="Foto actual" 
+                                     style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-cyan);">
+                                {% else %}
+                                <div id="preview-image" style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                                    <i data-lucide="user" style="width: 80px; height: 80px; color: white;"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Zona de drag & drop -->
+                            <div id="drop-zone" style="border: 2px dashed var(--glass-border); border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease;">
+                                <i data-lucide="upload-cloud" style="width: 48px; height: 48px; color: var(--accent-cyan); margin-bottom: 1rem;"></i>
+                                <p class="mb-2">Arrastra tu foto aquí o haz clic para seleccionar</p>
+                                <small class="text-muted">Formatos: JPG, PNG, GIF (máx. 5MB)</small>
+                            </div>
+                            
+                            <input type="file" class="form-control mt-2" name="foto_perfil" id="foto_perfil" 
+                                   accept="image/*" style="display: none;">
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <!-- PERFIL ACTIVO -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i data-lucide="settings" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Descripción del Perfil
+                            </label>
+                            <input type="text" class="form-control" name="descripcion_perfil" 
+                                   value="{{ datos.descripcion_perfil|default:'' }}"
+                                   placeholder="Ej: Ingeniero en Sistemas, Desarrollador Full Stack">
+                            <small class="text-muted">Aparecerá como título en tu CV público</small>
+                        </div>
+                        
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" name="perfil_activo" id="perfil_activo"
+                                   {% if datos.perfil_activo or not datos %}checked{% endif %}>
+                            <label class="form-check-label" for="perfil_activo">
+                                <i data-lucide="eye" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Perfil activo (visible públicamente)
+                            </label>
+                        </div>
+                        
+                        <hr class="my-4">
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -120,6 +175,61 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
+        
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('foto_perfil');
+        const previewImage = document.getElementById('preview-image');
+        
+        // Click en la zona activa el input
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        // Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--accent-cyan)';
+            dropZone.style.backgroundColor = 'rgba(6, 182, 212, 0.1)';
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = 'var(--glass-border)';
+            dropZone.style.backgroundColor = 'transparent';
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--glass-border)';
+            dropZone.style.backgroundColor = 'transparent';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                previewFile(files[0]);
+            }
+        });
+        
+        // Preview cuando se selecciona archivo
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                previewFile(e.target.files[0]);
+            }
+        });
+        
+        // Función para mostrar preview
+        function previewFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (previewImage.tagName === 'IMG') {
+                    previewImage.src = e.target.result;
+                } else {
+                    const img = document.createElement('img');
+                    img.id = 'preview-image';
+                    img.src = e.target.result;
+                    img.style.cssText = 'width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-cyan);';
+                    previewImage.parentNode.replaceChild(img, previewImage);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
     });
 </script>
 {% endblock %}
