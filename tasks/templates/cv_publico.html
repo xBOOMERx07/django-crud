@@ -16,10 +16,9 @@
     </div>
     {% else %}
     
-    <!-- Header del CV -->
     <div class="row mb-5">
         <div class="col-12">
-            <div class="card text-center">
+            <div class="card text-center shadow-sm">
                 <div class="card-body p-5">
                     {% if datos_personales.foto_perfil %}
                     <img src="{{ datos_personales.foto_perfil.url }}" alt="Foto de perfil" 
@@ -51,48 +50,27 @@
                         </div>
                     </div>
                     
-                    {% if datos_personales.sitio_web %}
-                    <div class="mt-3">
-                        <a href="{{ datos_personales.sitio_web }}" target="_blank" class="btn btn-primary">
-                            <i data-lucide="globe" style="width: 18px; height: 18px; vertical-align: middle;"></i>
-                            Visitar Sitio Web
+                    <div class="mt-4 d-flex justify-content-center gap-3">
+                        {% if datos_personales.linkedin_url %}
+                        <a href="{{ datos_personales.linkedin_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i data-lucide="linkedin" style="width: 16px; height: 16px;"></i> LinkedIn
                         </a>
+                        {% endif %}
+                        {% if datos_personales.github_url %}
+                        <a href="{{ datos_personales.github_url }}" target="_blank" class="btn btn-outline-dark btn-sm">
+                            <i data-lucide="github" style="width: 16px; height: 16px;"></i> GitHub
+                        </a>
+                        {% endif %}
+                        {% if datos_personales.portfolio_url %}
+                        <a href="{{ datos_personales.portfolio_url }}" target="_blank" class="btn btn-outline-success btn-sm">
+                            <i data-lucide="globe" style="width: 16px; height: 16px;"></i> Portafolio
+                        </a>
+                        {% endif %}
                     </div>
-                    {% endif %}
                     
-                    <!-- REDES SOCIALES -->
-                    {% if datos_personales.linkedin_url or datos_personales.github_url or datos_personales.twitter_url or datos_personales.portfolio_url %}
                     <div class="mt-4">
-                        <h6 class="mb-3">Redes Sociales</h6>
-                        <div class="d-flex justify-content-center gap-3">
-                            {% if datos_personales.linkedin_url %}
-                            <a href="{{ datos_personales.linkedin_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                <i data-lucide="linkedin"></i> LinkedIn
-                            </a>
-                            {% endif %}
-                            {% if datos_personales.github_url %}
-                            <a href="{{ datos_personales.github_url }}" target="_blank" class="btn btn-outline-dark btn-sm">
-                                <i data-lucide="github"></i> GitHub
-                            </a>
-                            {% endif %}
-                            {% if datos_personales.twitter_url %}
-                            <a href="{{ datos_personales.twitter_url }}" target="_blank" class="btn btn-outline-info btn-sm">
-                                <i data-lucide="twitter"></i> Twitter
-                            </a>
-                            {% endif %}
-                            {% if datos_personales.portfolio_url %}
-                            <a href="{{ datos_personales.portfolio_url }}" target="_blank" class="btn btn-outline-success btn-sm">
-                                <i data-lucide="globe"></i> Portafolio
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% endif %}
-                    
-                    <!-- BOTÓN DESCARGAR PDF -->
-                    <div class="mt-4">
-                        <a href="{% url 'descargar_pdf' username %}" target="_blank" class="btn btn-danger btn-lg">
-                            <i data-lucide="download"></i> Descargar CV en PDF
+                        <a href="{% url 'descargar_pdf' username %}" target="_blank" class="btn btn-danger btn-lg shadow">
+                            <i data-lucide="file-down"></i> Descargar CV en PDF
                         </a>
                     </div>
                 </div>
@@ -100,103 +78,66 @@
         </div>
     </div>
     
-    <!-- Información Personal -->
-    
-    <!-- Información Personal -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h3 class="mb-4">
-                        <i data-lucide="user-circle" style="width: 32px; height: 32px; vertical-align: middle;"></i>
+                        <i data-lucide="user-circle" style="width: 32px; height: 32px; vertical-align: middle; color: var(--accent-cyan);"></i>
                         Información Personal
                     </h3>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <strong><i data-lucide="credit-card" style="width: 18px; height: 18px; vertical-align: middle;"></i> Cédula:</strong>
+                            <strong><i data-lucide="credit-card" style="width: 18px; height: 18px;"></i> Cédula:</strong>
                             <span class="ms-2">{{ datos_personales.numero_cedula }}</span>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <strong><i data-lucide="calendar" style="width: 18px; height: 18px; vertical-align: middle;"></i> Fecha de Nacimiento:</strong>
-                            <span class="ms-2">{{ datos_personales.fecha_nacimiento|date:"d/m/Y" }} ({{ datos_personales.edad }} años)</span>
+                            <strong><i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Nacimiento:</strong>
+                            <span class="ms-2">{{ datos_personales.fecha_nacimiento|date:"d/m/Y" }}</span>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <strong><i data-lucide="heart" style="width: 18px; height: 18px; vertical-align: middle;"></i> Estado Civil:</strong>
+                            <strong><i data-lucide="heart" style="width: 18px; height: 18px;"></i> Estado Civil:</strong>
                             <span class="ms-2">{{ datos_personales.estado_civil }}</span>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <strong><i data-lucide="flag" style="width: 18px; height: 18px; vertical-align: middle;"></i> Nacionalidad:</strong>
-                            <span class="ms-2">{{ datos_personales.nacionalidad }}</span>
+                            <strong><i data-lucide="flag" style="width: 18px; height: 18px;"></i> Nacionalidad:</strong>
+                            <span class="ms-2">{{ datos_personales.nacionalidad|default:"Ecuatoriana" }}</span>
                         </div>
-                        {% if datos_personales.licencia_conducir %}
-                        <div class="col-md-6 mb-3">
-                            <strong><i data-lucide="car" style="width: 18px; height: 18px; vertical-align: middle;"></i> Licencia:</strong>
-                            <span class="ms-2">Tipo {{ datos_personales.licencia_conducir }}</span>
-                        </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- Direcciones -->
-    {% if direcciones %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="mb-4">
-                        <i data-lucide="map-pin" style="width: 32px; height: 32px; vertical-align: middle;"></i>
-                        Direcciones
-                    </h3>
-                    {% for dir in direcciones %}
-                    <div class="mb-3">
-                        <strong>{{ dir.tipo }}{% if dir.es_principal %} <span class="badge bg-primary">Principal</span>{% endif %}:</strong>
-                        <p class="mb-1">{{ dir.direccion_completa }}</p>
-                        {% if dir.ciudad or dir.provincia %}
-                        <small class="text-muted">{{ dir.ciudad }}{% if dir.provincia %}, {{ dir.provincia }}{% endif %}</small>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- Experiencia Laboral -->
+
     {% if experiencias %}
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h3 class="mb-4">
-                        <i data-lucide="briefcase" style="width: 32px; height: 32px; vertical-align: middle;"></i>
+                        <i data-lucide="briefcase" style="width: 32px; height: 32px; vertical-align: middle; color: var(--accent-purple);"></i>
                         Experiencia Laboral
                     </h3>
                     {% for exp in experiencias %}
-                    <div class="mb-4 pb-4" style="border-bottom: 1px solid var(--glass-border);">
+                    <div class="mb-4 pb-4 border-bottom">
                         <h5>{{ exp.cargo_desempenado }}</h5>
-                        <p class="mb-2" style="color: var(--accent-cyan);">
-                            <strong>{{ exp.nombre_empresa }}</strong>
-                            {% if exp.lugar_empresa %} - {{ exp.lugar_empresa }}{% endif %}
-                        </p>
-                        <p class="mb-2" style="color: var(--text-secondary);">
-                            <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                        <p class="mb-2 text-primary"><strong>{{ exp.nombre_empresa }}</strong></p>
+                        <p class="mb-2 text-muted small">
+                            <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
                             {{ exp.fecha_inicio_gestion|date:"M Y" }} - 
-                            {% if exp.actualmente_trabajando %}
-                                <span class="badge bg-primary">Actualidad</span>
-                            {% else %}
-                                {{ exp.fecha_fin_gestion|date:"M Y" }}
-                            {% endif %}
+                            {% if exp.actualmente_trabajando %} Actualidad {% else %} {{ exp.fecha_fin_gestion|date:"M Y" }} {% endif %}
                         </p>
                         <p style="white-space: pre-line;">{{ exp.descripcion_funciones }}</p>
+                        
                         {% if exp.ruta_certificado %}
-                        <a href="{{ exp.ruta_certificado.url }}" target="_blank" class="btn btn-sm btn-primary">
-                            <i data-lucide="file-text" style="width: 14px; height: 14px; vertical-align: middle;"></i>
-                            Ver Certificado
-                        </a>
+                        <div class="mt-2 d-flex gap-2">
+                            <a href="{{ exp.ruta_certificado.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i data-lucide="eye" style="width: 14px; height: 14px;"></i> Ver
+                            </a>
+                            <a href="{{ exp.ruta_certificado.url }}" download class="btn btn-sm btn-primary">
+                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Descargar
+                            </a>
+                        </div>
                         {% endif %}
                     </div>
                     {% endfor %}
@@ -205,35 +146,31 @@
         </div>
     </div>
     {% endif %}
-    
-    <!-- Cursos -->
+
     {% if cursos %}
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h3 class="mb-4">
-                        <i data-lucide="book-open" style="width: 32px; height: 32px; vertical-align: middle;"></i>
+                        <i data-lucide="book-open" style="width: 32px; height: 32px; vertical-align: middle; color: var(--accent-pink);"></i>
                         Cursos y Capacitaciones
                     </h3>
                     {% for curso in cursos %}
-                    <div class="mb-4 pb-4" style="border-bottom: 1px solid var(--glass-border);">
+                    <div class="mb-4 pb-4 border-bottom">
                         <h5>{{ curso.nombre_curso }}</h5>
-                        <p class="mb-2" style="color: var(--accent-purple);">
-                            <strong>{{ curso.entidad_patrocinadora }}</strong>
-                        </p>
-                        <p class="mb-2" style="color: var(--text-secondary);">
-                            <i data-lucide="clock" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                            {{ curso.total_horas }} horas | 
-                            <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                            {{ curso.fecha_inicio|date:"M Y" }}{% if curso.fecha_fin %} - {{ curso.fecha_fin|date:"M Y" }}{% endif %}
-                        </p>
-                        <p>{{ curso.descripcion_curso }}</p>
+                        <p class="mb-2" style="color: var(--accent-purple);"><strong>{{ curso.entidad_patrocinadora }}</strong></p>
+                        <p class="mb-2 text-muted small">{{ curso.total_horas }} horas | {{ curso.fecha_inicio|date:"M Y" }}</p>
+                        
                         {% if curso.ruta_certificado %}
-                        <a href="{{ curso.ruta_certificado.url }}" target="_blank" class="btn btn-sm btn-primary">
-                            <i data-lucide="award" style="width: 14px; height: 14px; vertical-align: middle;"></i>
-                            Ver Certificado
-                        </a>
+                        <div class="mt-2 d-flex gap-2">
+                            <a href="{{ curso.ruta_certificado.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i data-lucide="eye" style="width: 14px; height: 14px;"></i> Ver
+                            </a>
+                            <a href="{{ curso.ruta_certificado.url }}" download class="btn btn-sm btn-primary">
+                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Descargar
+                            </a>
+                        </div>
                         {% endif %}
                     </div>
                     {% endfor %}
@@ -242,15 +179,14 @@
         </div>
     </div>
     {% endif %}
-    
-    <!-- Habilidades -->
+
     {% if habilidades %}
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <h3 class="mb-4">
-                        <i data-lucide="zap" style="width: 32px; height: 32px; vertical-align: middle;"></i>
+                        <i data-lucide="zap" style="width: 32px; height: 32px; vertical-align: middle; color: var(--accent-cyan);"></i>
                         Habilidades
                     </h3>
                     <div class="row">
@@ -258,17 +194,10 @@
                         <div class="col-md-6 mb-3">
                             <div class="d-flex justify-content-between align-items-center">
                                 <strong>{{ hab.nombre }}</strong>
-                                <span class="badge 
-                                    {% if hab.nivel == 'basico' %}bg-secondary
-                                    {% elif hab.nivel == 'intermedio' %}bg-info
-                                    {% elif hab.nivel == 'avanzado' %}bg-warning
-                                    {% else %}bg-primary{% endif %}">
+                                <span class="badge {% if hab.nivel == 'basico' %}bg-secondary{% elif hab.nivel == 'intermedio' %}bg-info{% else %}bg-warning{% endif %}">
                                     {{ hab.get_nivel_display }}
                                 </span>
                             </div>
-                            {% if hab.categoria %}
-                            <small class="text-muted">{{ hab.categoria }}</small>
-                            {% endif %}
                         </div>
                         {% endfor %}
                     </div>
@@ -277,96 +206,48 @@
         </div>
     </div>
     {% endif %}
-    
-    <!-- Reconocimientos -->
-    {% if reconocimientos %}
+
+    {% if productos_garage %}
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card border-0 shadow-sm" style="border-top: 5px solid #f59e0b !important;">
                 <div class="card-body">
                     <h3 class="mb-4">
-                        <i data-lucide="award" style="width: 32px; height: 32px; vertical-align: middle;"></i>
-                        Reconocimientos
+                        <i data-lucide="shopping-bag" style="width: 32px; height: 32px; vertical-align: middle; color: #f59e0b;"></i>
+                        Artículos en Venta
                     </h3>
-                    {% for rec in reconocimientos %}
-                    <div class="mb-3 pb-3" style="border-bottom: 1px solid var(--glass-border);">
-                        <h5>{{ rec.tipo_reconocimiento }}</h5>
-                        <p class="mb-2" style="color: var(--accent-pink);">
-                            <strong>{{ rec.entidad_patrocinadora }}</strong> - {{ rec.fecha_reconocimiento|date:"M Y" }}
-                        </p>
-                        <p>{{ rec.descripcion_reconocimiento }}</p>
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        {% for producto in productos_garage %}
+                        <div class="col">
+                            <div class="card h-100 border-0 bg-light shadow-sm">
+                                {% if producto.foto_producto %}
+                                <img src="{{ producto.foto_producto.url }}" class="card-img-top" alt="{{ producto.nombre_producto }}" style="height: 200px; object-fit: cover;">
+                                {% endif %}
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <h5 class="card-title mb-0">{{ producto.nombre_producto }}</h5>
+                                        <span class="badge {% if producto.estado_producto == 'Bueno' %}bg-success{% else %}bg-warning{% endif %}">
+                                            {{ producto.estado_producto }}
+                                        </span>
+                                    </div>
+                                    <p class="card-text text-muted small">{{ producto.descripcion|truncatewords:15 }}</p>
+                                    <h4 class="text-primary mb-3">${{ producto.valor_del_bien }}</h4>
+                                    
+                                    <a href="https://wa.me/{{ datos_personales.telefono_convencional }}?text=Hola%20{{ datos_personales.nombres }},%20estoy%20interesado%20en%20tu%20producto:%20{{ producto.nombre_producto }}" 
+                                       target="_blank" class="btn btn-success w-100">
+                                        <i data-lucide="message-circle" style="width: 16px; height: 16px;"></i> Contactar por WhatsApp
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
     {% endif %}
-    
-    <!-- Productos Académicos -->
-    {% if productos_academicos %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="mb-4">
-                        <i data-lucide="file-text" style="width: 32px; height: 32px; vertical-align: middle;"></i>
-                        Productos Académicos
-                    </h3>
-                    {% for prod in productos_academicos %}
-                    <div class="mb-3 pb-3" style="border-bottom: 1px solid var(--glass-border);">
-                        <h5>{{ prod.nombre_recurso }}</h5>
-                        <p class="mb-2" style="color: var(--text-secondary);">
-                            <strong>{{ prod.clasificador }}</strong>
-                            {% if prod.fecha_publicacion %} - {{ prod.fecha_publicacion|date:"M Y" }}{% endif %}
-                        </p>
-                        <p>{{ prod.descripcion }}</p>
-                        {% if prod.url_publicacion %}
-                        <a href="{{ prod.url_publicacion }}" target="_blank" class="btn btn-sm btn-primary">
-                            <i data-lucide="external-link" style="width: 14px; height: 14px; vertical-align: middle;"></i>
-                            Ver Publicación
-                        </a>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    
-    <!-- Productos Laborales -->
-    {% if productos_laborales %}
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="mb-4">
-                        <i data-lucide="package" style="width: 32px; height: 32px; vertical-align: middle;"></i>
-                        Productos Laborales
-                    </h3>
-                    {% for prod in productos_laborales %}
-                    <div class="mb-3 pb-3" style="border-bottom: 1px solid var(--glass-border);">
-                        <h5>{{ prod.nombre_producto }}</h5>
-                        <p class="mb-2" style="color: var(--text-secondary);">
-                            {% if prod.empresa_relacionada %}<strong>{{ prod.empresa_relacionada }}</strong> - {% endif %}
-                            {{ prod.fecha_producto|date:"M Y" }}
-                        </p>
-                        <p>{{ prod.descripcion }}</p>
-                        {% if prod.url_producto %}
-                        <a href="{{ prod.url_producto }}" target="_blank" class="btn btn-sm btn-primary">
-                            <i data-lucide="external-link" style="width: 14px; height: 14px; vertical-align: middle;"></i>
-                            Ver Producto
-                        </a>
-                        {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    
+
     {% endif %}
 </div>
 

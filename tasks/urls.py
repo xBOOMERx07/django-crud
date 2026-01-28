@@ -29,3 +29,8 @@ urlpatterns = [
     path('habilidades/crear/', views.crear_habilidad, name='crear_habilidad'),
     path('habilidades/<int:pk>/eliminar/', views.eliminar_habilidad, name='eliminar_habilidad'),
 ]
+# Venta Garage
+path('venta-garage/', views.lista_ventas_garage, name='lista_ventas_garage'),
+path('venta-garage/crear/', views.crear_venta_garage, name='crear_venta_garage'),
+path('venta-garage/<int:pk>/editar/', views.editar_venta_garage, name='editar_venta_garage'),
+path('venta-garage/<int:pk>/eliminar/', views.eliminar_venta_garage, name='eliminar_venta_garage'),

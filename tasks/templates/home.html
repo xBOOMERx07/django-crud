@@ -107,6 +107,22 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100" style="border-bottom: 4px solid #f59e0b;">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex justify-content-between align-items-start">
+                                <i data-lucide="shopping-bag" style="width: 48px; height: 48px; color: #f59e0b;"></i>
+                                <span class="badge rounded-pill bg-light text-dark border">Nuevo</span>
+                            </div>
+                            <h5 class="card-title">Venta Garage</h5>
+                            <p class="card-text">Publica artículos, establece estados (Bueno/Regular) y gestiona tus ventas.</p>
+                            <a href="{% url 'lista_ventas_garage' %}" class="btn btn-primary w-100 mt-3" style="background-color: #f59e0b; border-color: #f59e0b;">
+                                <i data-lucide="shopping-cart" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Administrar ({{ total_ventas }})
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Panel Admin (si eres superusuario) -->
                 {% if user.is_superuser %}

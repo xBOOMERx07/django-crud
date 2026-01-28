@@ -391,3 +391,68 @@ def descargar_pdf(request, username):
     
     return response
 
+# ==========================================
+# GESTIÓN: VENTA GARAGE
+# ==========================================
+@login_required
+def lista_ventas_garage(request):
+    """Lista de productos en venta"""
+    productos = VentaGarage.objects.filter(user=request.user).order_by('-fecha_creacion')
+    return render(request, 'venta_garage/lista.html', {'productos': productos})
+
+
+@login_required
+def crear_venta_garage(request):
+    """Crear nuevo producto para venta"""
+    if request.method == 'POST':
+        producto = VentaGarage.objects.create(
+            user=request.user,
+            nombre_producto=request.POST.get('nombre_producto'),
+            estado_producto=request.POST.get('estado_producto', 'Bueno'),
+            descripcion=request.POST.get('descripcion', ''),
+            valor_del_bien=float(request.POST.get('valor_del_bien', 0)),
+            activar_para_que_se_vea_en_front=request.POST.get('activar_para_que_se_vea_en_front') == 'on',
+        )
+        
+        # Manejar foto del producto
+        if request.FILES.get('foto_producto'):
+            producto.foto_producto = request.FILES['foto_producto']
+            producto.save()
+        
+        return redirect('lista_ventas_garage')
+    
+    return render(request, 'venta_garage/form.html', {'action': 'Crear', 'producto': None})
+
+
+@login_required
+def editar_venta_garage(request, pk):
+    """Editar producto en venta"""
+    producto = get_object_or_404(VentaGarage, pk=pk, user=request.user)
+    
+    if request.method == 'POST':
+        producto.nombre_producto = request.POST.get('nombre_producto')
+        producto.estado_producto = request.POST.get('estado_producto', 'Bueno')
+        producto.descripcion = request.POST.get('descripcion', '')
+        producto.valor_del_bien = float(request.POST.get('valor_del_bien', 0))
+        producto.vendido = request.POST.get('vendido') == 'on'
+        producto.activar_para_que_se_vea_en_front = request.POST.get('activar_para_que_se_vea_en_front') == 'on'
+        
+        # Manejar foto del producto
+        if request.FILES.get('foto_producto'):
+            producto.foto_producto = request.FILES['foto_producto']
+        
+        producto.save()
+        return redirect('lista_ventas_garage')
+    
+    return render(request, 'venta_garage/form.html', {'action': 'Editar', 'producto': producto})
+
+
+@login_required
+def eliminar_venta_garage(request, pk):
+    """Eliminar producto"""
+    producto = get_object_or_404(VentaGarage, pk=pk, user=request.user)
+    if request.method == 'POST':
+        producto.delete()
+        return redirect('lista_ventas_garage')
+    return render(request, 'confirmar_eliminar.html', {'objeto': producto, 'tipo': 'Producto'})
+
