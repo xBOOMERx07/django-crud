@@ -59,10 +59,48 @@
                         </a>
                     </div>
                     {% endif %}
+                    
+                    <!-- REDES SOCIALES -->
+                    {% if datos_personales.linkedin_url or datos_personales.github_url or datos_personales.twitter_url or datos_personales.portfolio_url %}
+                    <div class="mt-4">
+                        <h6 class="mb-3">Redes Sociales</h6>
+                        <div class="d-flex justify-content-center gap-3">
+                            {% if datos_personales.linkedin_url %}
+                            <a href="{{ datos_personales.linkedin_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                <i data-lucide="linkedin"></i> LinkedIn
+                            </a>
+                            {% endif %}
+                            {% if datos_personales.github_url %}
+                            <a href="{{ datos_personales.github_url }}" target="_blank" class="btn btn-outline-dark btn-sm">
+                                <i data-lucide="github"></i> GitHub
+                            </a>
+                            {% endif %}
+                            {% if datos_personales.twitter_url %}
+                            <a href="{{ datos_personales.twitter_url }}" target="_blank" class="btn btn-outline-info btn-sm">
+                                <i data-lucide="twitter"></i> Twitter
+                            </a>
+                            {% endif %}
+                            {% if datos_personales.portfolio_url %}
+                            <a href="{{ datos_personales.portfolio_url }}" target="_blank" class="btn btn-outline-success btn-sm">
+                                <i data-lucide="globe"></i> Portafolio
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- BOTÓN DESCARGAR PDF -->
+                    <div class="mt-4">
+                        <a href="{% url 'descargar_pdf' username %}" target="_blank" class="btn btn-danger btn-lg">
+                            <i data-lucide="download"></i> Descargar CV en PDF
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Información Personal -->
     
     <!-- Información Personal -->
     <div class="row mb-4">

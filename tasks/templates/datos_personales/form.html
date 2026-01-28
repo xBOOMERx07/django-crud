@@ -158,7 +158,55 @@
                                 <input type="email" class="form-control" name="email_personal" value="{{ datos.email_personal|default:'' }}">
                             </div>
                         </div>
-                        
+                        <hr class="my-4">
+<h5 class="mb-3">
+    <i data-lucide="share-2" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+    Redes Sociales
+</h5>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">
+            <i data-lucide="linkedin" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+            LinkedIn
+        </label>
+        <input type="url" class="form-control" name="linkedin_url" 
+               value="{{ datos.linkedin_url|default:'' }}"
+               placeholder="https://linkedin.com/in/tu-perfil">
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label class="form-label">
+            <i data-lucide="github" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+            GitHub
+        </label>
+        <input type="url" class="form-control" name="github_url" 
+               value="{{ datos.github_url|default:'' }}"
+               placeholder="https://github.com/tu-usuario">
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label class="form-label">
+            <i data-lucide="twitter" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+            Twitter/X
+        </label>
+        <input type="url" class="form-control" name="twitter_url" 
+               value="{{ datos.twitter_url|default:'' }}"
+               placeholder="https://twitter.com/tu-usuario">
+    </div>
+    
+    <div class="col-md-6 mb-3">
+        <label class="form-label">
+            <i data-lucide="briefcase" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+            Portafolio Personal
+        </label>
+        <input type="url" class="form-control" name="portfolio_url" 
+               value="{{ datos.portfolio_url|default:'' }}"
+               placeholder="https://tu-portfolio.com">
+    </div>
+</div>
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>

@@ -10,6 +10,7 @@ urlpatterns = [
     
     # CV Público
     path('cv/<str:username>/', views.cv_publico, name='cv_publico'),
+    path('cv/<str:username>/pdf/', views.descargar_pdf, name='descargar_pdf'),  
     
     # Datos Personales
     path('datos-personales/editar/', views.editar_datos_personales, name='editar_datos_personales'),

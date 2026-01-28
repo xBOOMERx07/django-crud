@@ -1,3 +1,6 @@
+from django.template.loader import render_to_string
+from django.http import HttpResponse  
+from xhtml2pdf import pisa    
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -175,6 +178,12 @@ def editar_datos_personales(request):
             datos.descripcion_perfil = request.POST.get('descripcion_perfil', '')
             datos.perfil_activo = request.POST.get('perfil_activo') == 'on'
             
+            # Redes sociales
+            datos.linkedin_url = request.POST.get('linkedin_url', '')
+            datos.github_url = request.POST.get('github_url', '')
+            datos.twitter_url = request.POST.get('twitter_url', '')
+            datos.portfolio_url = request.POST.get('portfolio_url', '')
+            
             # Manejar foto de perfil
             if request.FILES.get('foto_perfil'):
                 datos.foto_perfil = request.FILES['foto_perfil']
@@ -193,7 +202,11 @@ def editar_datos_personales(request):
                 email_personal=request.POST.get('email_personal', ''),
                 estado_civil=request.POST.get('estado_civil', 'Soltero/a'),
                 descripcion_perfil=request.POST.get('descripcion_perfil', ''),
-                perfil_activo=request.POST.get('perfil_activo') == 'on'
+                perfil_activo=request.POST.get('perfil_activo') == 'on',
+                linkedin_url=request.POST.get('linkedin_url', ''),
+                github_url=request.POST.get('github_url', ''),
+                twitter_url=request.POST.get('twitter_url', ''),
+                portfolio_url=request.POST.get('portfolio_url', '')
             )
             
             # Manejar foto de perfil en creación
@@ -305,3 +318,76 @@ def eliminar_habilidad(request, pk):
         hab.delete()
         return redirect('lista_habilidades')
     return render(request, 'confirmar_eliminar.html', {'objeto': hab, 'tipo': 'Habilidad'})
+
+
+# ==========================================
+# GENERAR PDF
+# ==========================================
+def descargar_pdf(request, username):
+    """Generar y descargar CV en PDF"""
+    usuario = get_object_or_404(User, username=username)
+    
+    try:
+        datos_personales = DatosPersonales.objects.get(user=usuario, perfil_activo=True)
+    except DatosPersonales.DoesNotExist:
+        datos_personales = None
+    
+    # Obtener datos
+    experiencias = ExperienciaLaboral.objects.filter(
+        user=usuario, 
+        activar_para_que_se_vea_en_front=True
+    ).order_by('-fecha_inicio_gestion')
+    
+    cursos = CursoRealizado.objects.filter(
+        user=usuario,
+        activar_para_que_se_vea_en_front=True
+    ).order_by('-fecha_inicio')
+    
+    habilidades = Habilidad.objects.filter(
+        user=usuario,
+        activar_para_que_se_vea_en_front=True
+    )
+    
+    reconocimientos = Reconocimiento.objects.filter(
+        user=usuario,
+        activar_para_que_se_vea_en_front=True
+    ).order_by('-fecha_reconocimiento')
+    
+    productos_academicos = ProductoAcademico.objects.filter(
+        user=usuario,
+        activar_para_que_se_vea_en_front=True
+    ).order_by('-fecha_publicacion')
+    
+    productos_laborales = ProductoLaboral.objects.filter(
+        user=usuario,
+        activar_para_que_se_vea_en_front=True
+    ).order_by('-fecha_producto')
+    
+    direcciones = Direccion.objects.filter(user=usuario).order_by('-es_principal', 'tipo')
+    
+    context = {
+        'datos_personales': datos_personales,
+        'experiencias': experiencias,
+        'cursos': cursos,
+        'habilidades': habilidades,
+        'reconocimientos': reconocimientos,
+        'productos_academicos': productos_academicos,
+        'productos_laborales': productos_laborales,
+        'direcciones': direcciones,
+    }
+    
+    # Renderizar template
+    html_string = render_to_string('cv_pdf.html', context)
+    
+    # Crear PDF con xhtml2pdf
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="CV_{username}.pdf"'
+    
+    # Convertir HTML a PDF
+    pisa_status = pisa.CreatePDF(html_string, dest=response)
+    
+    if pisa_status.err:
+        return HttpResponse('Error al generar PDF', status=500)
+    
+    return response
+

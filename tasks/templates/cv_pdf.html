@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial; font-size: 11pt; margin: 20px; }
+        h1 { font-size: 22pt; text-align: center; margin-bottom: 5px; }
+        h2 { font-size: 13pt; border-bottom: 1px solid #ccc; padding-bottom: 3px; margin-top: 15px; }
+        .subtitle { text-align: center; font-size: 13pt; color: #2563eb; margin-bottom: 5px; }
+        .contact { text-align: center; font-size: 9pt; color: #666; margin-bottom: 20px; }
+        .item { margin-bottom: 10px; }
+        .item-title { font-weight: bold; }
+        .item-subtitle { color: #2563eb; }
+        .item-meta { font-size: 9pt; color: #666; }
+        table { width: 100%; }
+        td { padding: 3px; }
+    </style>
+</head>
+<body>
+    {% if datos_personales %}
+    
+    <h1>{{ datos_personales.nombre_completo|upper }}</h1>
+    {% if datos_personales.descripcion_perfil %}
+    <div class="subtitle">{{ datos_personales.descripcion_perfil }}</div>
+    {% endif %}
+    <div class="contact">
+        {% if datos_personales.email_personal %}{{ datos_personales.email_personal }} | {% endif %}
+        {% if datos_personales.telefono_convencional %}{{ datos_personales.telefono_convencional }}{% endif %}
+    </div>
+    
+    <h2>INFORMACIÓN PERSONAL</h2>
+    <table>
+        <tr>
+            <td><strong>Cédula:</strong> {{ datos_personales.numero_cedula }}</td>
+            <td><strong>Nacimiento:</strong> {{ datos_personales.fecha_nacimiento|date:"d/m/Y" }} ({{ datos_personales.edad }} años)</td>
+        </tr>
+        <tr>
+            <td><strong>Estado Civil:</strong> {{ datos_personales.estado_civil }}</td>
+            <td><strong>Nacionalidad:</strong> {{ datos_personales.nacionalidad }}</td>
+        </tr>
+    </table>
+    
+    {% if experiencias %}
+    <h2>EXPERIENCIA LABORAL</h2>
+    {% for exp in experiencias %}
+    <div class="item">
+        <div class="item-title">{{ exp.cargo_desempenado }}</div>
+        <div class="item-subtitle">{{ exp.nombre_empresa }}</div>
+        <div class="item-meta">
+            {{ exp.fecha_inicio_gestion|date:"M Y" }} - 
+            {% if exp.actualmente_trabajando %}Actualidad{% else %}{{ exp.fecha_fin_gestion|date:"M Y" }}{% endif %}
+        </div>
+        <p>{{ exp.descripcion_funciones }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if habilidades %}
+    <h2>HABILIDADES</h2>
+    {% for hab in habilidades %}
+    <strong>{{ hab.nombre }}</strong> - {{ hab.get_nivel_display }}{% if not forloop.last %} | {% endif %}
+    {% endfor %}
+    {% endif %}
+    
+    {% if cursos %}
+    <h2>CURSOS Y CAPACITACIONES</h2>
+    {% for curso in cursos %}
+    <div class="item">
+        <div class="item-title">{{ curso.nombre_curso }}</div>
+        <div class="item-subtitle">{{ curso.entidad_patrocinadora }}</div>
+        <div class="item-meta">{{ curso.total_horas }} horas | {{ curso.fecha_inicio|date:"M Y" }}</div>
+        <p>{{ curso.descripcion_curso }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if reconocimientos %}
+    <h2>RECONOCIMIENTOS</h2>
+    {% for rec in reconocimientos %}
+    <div class="item">
+        <div class="item-title">{{ rec.tipo_reconocimiento }}</div>
+        <div class="item-subtitle">{{ rec.entidad_patrocinadora }} - {{ rec.fecha_reconocimiento|date:"M Y" }}</div>
+        <p>{{ rec.descripcion_reconocimiento }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if productos_academicos %}
+    <h2>PRODUCTOS ACADÉMICOS</h2>
+    {% for prod in productos_academicos %}
+    <div class="item">
+        <div class="item-title">{{ prod.nombre_recurso }}</div>
+        <div class="item-subtitle">{{ prod.clasificador }}</div>
+        <p>{{ prod.descripcion }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% if productos_laborales %}
+    <h2>PRODUCTOS LABORALES</h2>
+    {% for prod in productos_laborales %}
+    <div class="item">
+        <div class="item-title">{{ prod.nombre_producto }}</div>
+        <p>{{ prod.descripcion }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+    
+    {% else %}
+    <p>Perfil no disponible</p>
+    {% endif %}
+</body>
+</html>

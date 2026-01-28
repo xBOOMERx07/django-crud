@@ -67,8 +67,12 @@ class DatosPersonales(models.Model):
     direccion_trabajo = models.CharField(max_length=50, blank=True, help_text="Dirección principal de trabajo")
     direccion_domiciliaria = models.CharField(max_length=50, blank=True, help_text="Dirección principal de domicilio")
     
-    # Web
+    # Web y Redes Sociales
     sitio_web = models.URLField(max_length=60, blank=True)
+    linkedin_url = models.URLField(max_length=200, blank=True, verbose_name="LinkedIn")
+    github_url = models.URLField(max_length=200, blank=True, verbose_name="GitHub")  
+    twitter_url = models.URLField(max_length=200, blank=True, verbose_name="Twitter/X")
+    portfolio_url = models.URLField(max_length=200, blank=True, verbose_name="Portafolio Personal")
     
     # Campos adicionales (mejoras)
     email_personal = models.EmailField(blank=True)
@@ -493,3 +497,4 @@ class Habilidad(models.Model):
     
     def __str__(self):
         return f"{self.nombre} ({self.nivel})"
+
