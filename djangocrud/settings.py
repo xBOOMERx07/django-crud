@@ -5,17 +5,14 @@ import dj_database_url
 # Ruta base del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SEGURIDAD: Llave secreta (usa variable de entorno en producción)
-SECRET_KEY = os.environ.get('SECRET_KEY', default='i83bweo!_8d1&rq#nfwd*0#8c5vq0oln1%io3fl0#2bgn&@rb(')
+# SEGURIDAD: Llave secreta
+SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-examen-jean-pierre-2026')
 
-# Modo DEBUG: Falso en Render, Verdadero en local
+# DEBUG: Falso en Render, Verdadero en local
 DEBUG = 'RENDER' not in os.environ
 
-# Configuración de Hosts permitidos
-if not DEBUG:
-    ALLOWED_HOSTS = [os.environ.get('RENDER_EXTERNAL_HOSTNAME', '*')]
-else:
-    ALLOWED_HOSTS = ['*']
+# CORRECCIÓN VITAL: Permitir todos los hosts en Render para evitar Error 500
+ALLOWED_HOSTS = ['*']
 
 # Aplicaciones instaladas
 INSTALLED_APPS = [
@@ -28,10 +25,10 @@ INSTALLED_APPS = [
     'tasks', # Tu aplicación principal
 ]
 
-# Middleware optimizado con WhiteNoise para archivos estáticos
+# Middleware optimizado (WhiteNoise corregido)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Debe ir aquí para Render
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Sirve archivos estáticos en Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -49,10 +46,11 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media', # Acceso a fotos en templates
+                'django.template.context_processors.media', # VITAL para las fotos de Venta Garage
             ],
         },
     },
@@ -60,7 +58,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djangocrud.wsgi.application'
 
-# Base de datos: Configurada para SQLite local y PostgreSQL en Render
+# Base de datos: Soporta SQLite local y PostgreSQL en Render automáticamente
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
@@ -85,14 +83,20 @@ USE_TZ = True
 # Archivos Estáticos (CSS, JS)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-# Almacenamiento eficiente para producción
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# CORRECCIÓN VITAL: Evita que el servidor explote si falta un archivo estático
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Archivos Media (Fotos de Perfil y Venta Garage)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Redirección de login
+# Redirecciones
 LOGIN_URL = '/signin'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/signin'
+
+# CORRECCIÓN VITAL: Para que Render acepte los formularios (Login/Signup)
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
