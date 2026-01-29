@@ -2,19 +2,14 @@ import os
 from pathlib import Path
 import dj_database_url
 
-# Ruta base del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SEGURIDAD: Llave secreta
 SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-examen-jean-pierre-2026')
 
-# DEBUG: Falso en Render, Verdadero en local
 DEBUG = 'RENDER' not in os.environ
 
-# CORRECCIÓN VITAL: Permitir todos los hosts en Render para evitar Error 500
 ALLOWED_HOSTS = ['*']
 
-# Aplicaciones instaladas
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -25,13 +20,12 @@ INSTALLED_APPS = [
     'tasks',
 ]
 
-# Middleware optimizado (WhiteNoise corregido)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -58,7 +52,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'djangocrud.wsgi.application'
 
-# Base de datos: Soporta SQLite local y PostgreSQL en Render automáticamente
 DATABASES = {
     'default': dj_database_url.config(
         default='sqlite:///db.sqlite3',
@@ -66,7 +59,6 @@ DATABASES = {
     )
 }
 
-# Validadores de contraseñas
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -74,37 +66,35 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internacionalización (Configurado para Ecuador)
 LANGUAGE_CODE = 'es-ec'
 TIME_ZONE = 'America/Guayaquil'
 USE_I18N = True
 USE_TZ = True
 
-# Archivos Estáticos (CSS, JS)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# Archivos Media (Fotos de Perfil y Venta Garage)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Redirecciones
 LOGIN_URL = '/signin'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/signin'
 
-# Configuración CSRF y Seguridad para HTTPS
+# Configuración CSRF ANTES del condicional DEBUG
 CSRF_TRUSTED_ORIGINS = [
     'https://jeanpierre-django-crud.onrender.com',
     'https://*.onrender.com',
 ]
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+# Configuración de seguridad
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Solo aplicar estas en producción
 if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = False
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
