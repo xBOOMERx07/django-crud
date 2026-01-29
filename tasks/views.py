@@ -54,15 +54,25 @@ def cv_publico(request, username):
 # ==========================================
 @login_required
 def home(request):
-    datos_personales = DatosPersonales.objects.filter(user=request.user).first()
-    context = {
-        'datos_personales': datos_personales,
-        'total_experiencias': ExperienciaLaboral.objects.filter(user=request.user).count(),
-        'total_cursos': CursoRealizado.objects.filter(user=request.user).count(),
-        'total_habilidades': Habilidad.objects.filter(user=request.user).count(),
-        'total_ventas': VentaGarage.objects.filter(user=request.user, vendido=False).count(),
-    }
-    return render(request, 'home.html', context)
+    try:
+        datos_personales = DatosPersonales.objects.filter(user=request.user).first()
+        context = {
+            'datos_personales': datos_personales,
+            'total_experiencias': ExperienciaLaboral.objects.filter(user=request.user).count(),
+            'total_cursos': CursoRealizado.objects.filter(user=request.user).count(),
+            'total_habilidades': Habilidad.objects.filter(user=request.user).count(),
+            'total_ventas': VentaGarage.objects.filter(user=request.user, vendido=False).count(),
+        }
+        return render(request, 'home.html', context)
+    except Exception as e:
+        print(f"Error en home: {e}")
+        return render(request, 'home.html', {
+            'datos_personales': None,
+            'total_experiencias': 0,
+            'total_cursos': 0,
+            'total_habilidades': 0,
+            'total_ventas': 0,
+        })
 
 # ==========================================
 # AUTENTICACIÓN
@@ -100,22 +110,38 @@ def signout(request):
 def editar_datos_personales(request):
     datos = DatosPersonales.objects.filter(user=request.user).first()
     if request.method == 'POST':
-        if not datos:
-            datos = DatosPersonales(user=request.user)
-        datos.nombres = request.POST.get('nombres')
-        datos.apellidos = request.POST.get('apellidos')
-        datos.numero_cedula = request.POST.get('numero_cedula')
-        datos.sexo = request.POST.get('sexo', 'H')
-        datos.fecha_nacimiento = request.POST.get('fecha_nacimiento') or None
-        datos.telefono_convencional = request.POST.get('telefono_convencional')
-        datos.email_personal = request.POST.get('email_personal')
-        datos.estado_civil = request.POST.get('estado_civil', 'Soltero/a')
-        datos.descripcion_perfil = request.POST.get('descripcion_perfil')
-        datos.perfil_activo = request.POST.get('perfil_activo') == 'on'
-        if request.FILES.get('foto_perfil'):
-            datos.foto_perfil = request.FILES['foto_perfil']
-        datos.save()
-        return redirect('home')
+        try:
+            if not datos:
+                datos = DatosPersonales(user=request.user)
+            
+            datos.nombres = request.POST.get('nombres', '')
+            datos.apellidos = request.POST.get('apellidos', '')
+            datos.numero_cedula = request.POST.get('numero_cedula', '')
+            datos.sexo = request.POST.get('sexo', 'H')
+            datos.fecha_nacimiento = request.POST.get('fecha_nacimiento') or None
+            datos.telefono_convencional = request.POST.get('telefono_convencional', '')
+            datos.email_personal = request.POST.get('email_personal', '')
+            datos.estado_civil = request.POST.get('estado_civil', 'Soltero/a')
+            datos.descripcion_perfil = request.POST.get('descripcion_perfil', '')
+            datos.perfil_activo = request.POST.get('perfil_activo') == 'on'
+            
+            # Campos de redes sociales (nuevos)
+            datos.linkedin_url = request.POST.get('linkedin_url', '')
+            datos.github_url = request.POST.get('github_url', '')
+            datos.twitter_url = request.POST.get('twitter_url', '')
+            datos.portfolio_url = request.POST.get('portfolio_url', '')
+            
+            if request.FILES.get('foto_perfil'):
+                datos.foto_perfil = request.FILES['foto_perfil']
+            
+            datos.save()
+            return redirect('home')
+        except Exception as e:
+            print(f"Error al guardar datos personales: {e}")
+            return render(request, 'datos_personales/form.html', {
+                'datos': datos,
+                'error': f'Error al guardar: {str(e)}'
+            })
     return render(request, 'datos_personales/form.html', {'datos': datos})
 
 # ==========================================
