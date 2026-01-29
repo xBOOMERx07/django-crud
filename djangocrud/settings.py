@@ -22,13 +22,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tasks', # Tu aplicación principal
+    'tasks',
 ]
 
 # Middleware optimizado (WhiteNoise corregido)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Sirve archivos estáticos en Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,7 +50,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media', # VITAL para las fotos de Venta Garage
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -83,8 +83,6 @@ USE_TZ = True
 # Archivos Estáticos (CSS, JS)
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# CORRECCIÓN VITAL: Evita que el servidor explote si falta un archivo estático
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Archivos Media (Fotos de Perfil y Venta Garage)
@@ -96,17 +94,17 @@ LOGIN_URL = '/signin'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/signin'
 
-# CORRECCIÓN VITAL: Para que Render acepte los formularios (Login/Signup)
+# Configuración CSRF y Seguridad para HTTPS
 CSRF_TRUSTED_ORIGINS = [
     'https://jeanpierre-django-crud.onrender.com',
     'https://*.onrender.com',
 ]
 
-# Configuración de seguridad para producción
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 if not DEBUG:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = False  # Render ya maneja SSL
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = False
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
