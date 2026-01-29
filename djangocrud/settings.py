@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY', default='django-insecure-examen-jean-pierre-2026')
 
-DEBUG = 'RENDER' not in os.environ
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -82,19 +82,9 @@ LOGIN_URL = '/signin'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/signin'
 
-# Configuración CSRF ANTES del condicional DEBUG
-CSRF_TRUSTED_ORIGINS = [
-    'https://jeanpierre-django-crud.onrender.com',
-    'https://*.onrender.com',
-]
+CSRF_TRUSTED_ORIGINS = ['https://jeanpierre-django-crud.onrender.com']
 
-# Configuración de seguridad
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Solo aplicar estas en producción
-if not DEBUG:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = False
+CSRF_COOKIE_SAMESITE = None
+SESSION_COOKIE_SAMESITE = None
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
