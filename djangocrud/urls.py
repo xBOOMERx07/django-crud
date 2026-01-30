@@ -8,6 +8,5 @@ urlpatterns = [
     path('', include('tasks.urls')),
 ]
 
-# Solo servir archivos media en desarrollo local
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Servir archivos media SIEMPRE (desarrollo y producción)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

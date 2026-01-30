@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.html import format_html  # <--- ESTO FALTABA
+from django.utils.html import format_html
 from .models import (
     DatosPersonales, Direccion, ExperienciaLaboral, Reconocimiento,
     CursoRealizado, ProductoAcademico, ProductoLaboral,
@@ -46,6 +46,13 @@ class DatosPersonalesAdmin(admin.ModelAdmin):
             return f"{edad} años"
         return "N/A"
     edad_display.short_description = "Edad"
+    
+    # ✅ AGREGAR ESTA FUNCIÓN PARA QUE EL ADMIN PUEDA GUARDAR
+    def save_model(self, request, obj, form, change):
+        # Si no tiene usuario asignado, asignar el usuario actual
+        if not obj.user_id:
+            obj.user = request.user
+        super().save_model(request, obj, form, change)
 
 
 # ==========================================
