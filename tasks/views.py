@@ -14,6 +14,7 @@ from .models import (
     Reconocimiento, CursoRealizado, ProductoAcademico,
     ProductoLaboral, VentaGarage, Habilidad
 )
+from .forms import DatosPersonalesForm  # ✅ IMPORTAR EL FORMULARIO
 
 # ==========================================
 # VISTA PÚBLICA DEL CV
@@ -104,45 +105,37 @@ def signout(request):
     return redirect('signin')
 
 # ==========================================
-# GESTIÓN: DATOS PERSONALES
+# GESTIÓN: DATOS PERSONALES ✅ CORREGIDO
 # ==========================================
 @login_required
 def editar_datos_personales(request):
+    # Obtener o preparar para crear datos personales
     datos = DatosPersonales.objects.filter(user=request.user).first()
+    
     if request.method == 'POST':
-        try:
-            if not datos:
-                datos = DatosPersonales(user=request.user)
-            
-            datos.nombres = request.POST.get('nombres', '')
-            datos.apellidos = request.POST.get('apellidos', '')
-            datos.numero_cedula = request.POST.get('numero_cedula', '')
-            datos.sexo = request.POST.get('sexo', 'H')
-            datos.fecha_nacimiento = request.POST.get('fecha_nacimiento') or None
-            datos.telefono_convencional = request.POST.get('telefono_convencional', '')
-            datos.email_personal = request.POST.get('email_personal', '')
-            datos.estado_civil = request.POST.get('estado_civil', 'Soltero/a')
-            datos.descripcion_perfil = request.POST.get('descripcion_perfil', '')
-            datos.perfil_activo = request.POST.get('perfil_activo') == 'on'
-            
-            # Campos de redes sociales (nuevos)
-            datos.linkedin_url = request.POST.get('linkedin_url', '')
-            datos.github_url = request.POST.get('github_url', '')
-            datos.twitter_url = request.POST.get('twitter_url', '')
-            datos.portfolio_url = request.POST.get('portfolio_url', '')
-            
-            if request.FILES.get('foto_perfil'):
-                datos.foto_perfil = request.FILES['foto_perfil']
-            
+        # Usar el formulario Django con los datos POST y archivos
+        form = DatosPersonalesForm(request.POST, request.FILES, instance=datos)
+        if form.is_valid():
+            # Guardar sin commitear para asignar el usuario
+            datos = form.save(commit=False)
+            datos.user = request.user  # ✅ CRÍTICO: Asignar usuario actual
             datos.save()
             return redirect('home')
-        except Exception as e:
-            print(f"Error al guardar datos personales: {e}")
+        else:
+            # Si hay errores, mostrar el formulario con errores
             return render(request, 'datos_personales/form.html', {
+                'form': form,
                 'datos': datos,
-                'error': f'Error al guardar: {str(e)}'
+                'error': 'Por favor corrige los errores marcados.'
             })
-    return render(request, 'datos_personales/form.html', {'datos': datos})
+    else:
+        # GET: Mostrar formulario vacío o con datos existentes
+        form = DatosPersonalesForm(instance=datos)
+    
+    return render(request, 'datos_personales/form.html', {
+        'form': form,
+        'datos': datos
+    })
 
 # ==========================================
 # GESTIÓN: EXPERIENCIAS
