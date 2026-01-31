@@ -18,6 +18,25 @@
                         Datos Personales
                     </h2>
                     
+                    {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>⚠️ Errores en el formulario:</strong>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         
@@ -47,8 +66,7 @@
                                 <small class="text-muted">Formatos: JPG, PNG, GIF (máx. 5MB)</small>
                             </div>
                             
-                            <input type="file" class="form-control mt-2" name="foto_perfil" id="foto_perfil" 
-                                   accept="image/*" style="display: none;">
+                            {{ form.foto_perfil }}
                         </div>
                         
                         <hr class="my-4">
@@ -59,16 +77,13 @@
                                 <i data-lucide="settings" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                 Descripción del Perfil
                             </label>
-                            <input type="text" class="form-control" name="descripcion_perfil" 
-                                   value="{{ datos.descripcion_perfil|default:'' }}"
-                                   placeholder="Ej: Ingeniero en Sistemas, Desarrollador Full Stack">
+                            {{ form.descripcion_perfil }}
                             <small class="text-muted">Aparecerá como título en tu CV público</small>
                         </div>
                         
                         <div class="form-check mb-4">
-                            <input class="form-check-input" type="checkbox" name="perfil_activo" id="perfil_activo"
-                                   {% if datos.perfil_activo or not datos %}checked{% endif %}>
-                            <label class="form-check-label" for="perfil_activo">
+                            {{ form.perfil_activo }}
+                            <label class="form-check-label" for="{{ form.perfil_activo.id_for_label }}">
                                 <i data-lucide="eye" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                 Perfil activo (visible públicamente)
                             </label>
@@ -82,7 +97,7 @@
                                     <i data-lucide="user" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                     Nombres *
                                 </label>
-                                <input type="text" class="form-control" name="nombres" value="{{ datos.nombres|default:'' }}" required>
+                                {{ form.nombres }}
                             </div>
                             
                             <div class="col-md-6 mb-3">
@@ -90,7 +105,7 @@
                                     <i data-lucide="user" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                     Apellidos *
                                 </label>
-                                <input type="text" class="form-control" name="apellidos" value="{{ datos.apellidos|default:'' }}" required>
+                                {{ form.apellidos }}
                             </div>
                         </div>
                         
@@ -100,7 +115,7 @@
                                     <i data-lucide="credit-card" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                     Número de Cédula *
                                 </label>
-                                <input type="text" class="form-control" name="numero_cedula" value="{{ datos.numero_cedula|default:'' }}" maxlength="10" required>
+                                {{ form.numero_cedula }}
                                 <small class="text-muted">10 dígitos</small>
                             </div>
                             
@@ -109,10 +124,7 @@
                                     <i data-lucide="user-check" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                     Sexo *
                                 </label>
-                                <select class="form-control" name="sexo" required>
-                                    <option value="H" {% if datos.sexo == 'H' %}selected{% endif %}>Hombre</option>
-                                    <option value="M" {% if datos.sexo == 'M' %}selected{% endif %}>Mujer</option>
-                                </select>
+                                {{ form.sexo }}
                             </div>
                         </div>
                         
@@ -122,7 +134,7 @@
                                     <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                     Fecha de Nacimiento *
                                 </label>
-                                <input type="date" class="form-control" name="fecha_nacimiento" value="{{ datos.fecha_nacimiento|date:'Y-m-d'|default:'' }}" required>
+                                {{ form.fecha_nacimiento }}
                                 <small class="text-muted">Edad: 18-70 años</small>
                             </div>
                             
@@ -131,82 +143,130 @@
                                     <i data-lucide="heart" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                     Estado Civil
                                 </label>
-                                <select class="form-control" name="estado_civil">
-                                    <option value="Soltero/a" {% if datos.estado_civil == 'Soltero/a' %}selected{% endif %}>Soltero/a</option>
-                                    <option value="Casado/a" {% if datos.estado_civil == 'Casado/a' %}selected{% endif %}>Casado/a</option>
-                                    <option value="Divorciado/a" {% if datos.estado_civil == 'Divorciado/a' %}selected{% endif %}>Divorciado/a</option>
-                                    <option value="Viudo/a" {% if datos.estado_civil == 'Viudo/a' %}selected{% endif %}>Viudo/a</option>
-                                    <option value="Unión Libre" {% if datos.estado_civil == 'Unión Libre' %}selected{% endif %}>Unión Libre</option>
-                                </select>
+                                {{ form.estado_civil }}
                             </div>
                         </div>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">
-                                    <i data-lucide="phone" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                    Teléfono
+                                    <i data-lucide="flag" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Nacionalidad
                                 </label>
-                                <input type="text" class="form-control" name="telefono_convencional" value="{{ datos.telefono_convencional|default:'' }}">
+                                {{ form.nacionalidad }}
                             </div>
                             
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">
-                                    <i data-lucide="mail" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                    Email Personal
+                                    <i data-lucide="map-pin" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Lugar de Nacimiento
                                 </label>
-                                <input type="email" class="form-control" name="email_personal" value="{{ datos.email_personal|default:'' }}">
+                                {{ form.lugar_nacimiento }}
                             </div>
                         </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="phone" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Teléfono Convencional
+                                </label>
+                                {{ form.telefono_convencional }}
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="smartphone" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Teléfono Móvil
+                                </label>
+                                {{ form.telefono_fijo }}
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="mail" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Email Personal *
+                                </label>
+                                {{ form.email_personal }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="home" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Dirección Domiciliaria
+                                </label>
+                                {{ form.direccion_domiciliaria }}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="briefcase" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Dirección de Trabajo
+                                </label>
+                                {{ form.direccion_trabajo }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i data-lucide="car" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Licencia de Conducir
+                            </label>
+                            {{ form.licencia_conducir }}
+                        </div>
+                        
                         <hr class="my-4">
-<h5 class="mb-3">
-    <i data-lucide="share-2" style="width: 20px; height: 20px; vertical-align: middle;"></i>
-    Redes Sociales
-</h5>
+                        <h5 class="mb-3">
+                            <i data-lucide="share-2" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                            Redes Sociales
+                        </h5>
 
-<div class="row">
-    <div class="col-md-6 mb-3">
-        <label class="form-label">
-            <i data-lucide="linkedin" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-            LinkedIn
-        </label>
-        <input type="url" class="form-control" name="linkedin_url" 
-               value="{{ datos.linkedin_url|default:'' }}"
-               placeholder="https://linkedin.com/in/tu-perfil">
-    </div>
-    
-    <div class="col-md-6 mb-3">
-        <label class="form-label">
-            <i data-lucide="github" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-            GitHub
-        </label>
-        <input type="url" class="form-control" name="github_url" 
-               value="{{ datos.github_url|default:'' }}"
-               placeholder="https://github.com/tu-usuario">
-    </div>
-</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="linkedin" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    LinkedIn
+                                </label>
+                                {{ form.linkedin_url }}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="github" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    GitHub
+                                </label>
+                                {{ form.github_url }}
+                            </div>
+                        </div>
 
-<div class="row">
-    <div class="col-md-6 mb-3">
-        <label class="form-label">
-            <i data-lucide="twitter" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-            Twitter/X
-        </label>
-        <input type="url" class="form-control" name="twitter_url" 
-               value="{{ datos.twitter_url|default:'' }}"
-               placeholder="https://twitter.com/tu-usuario">
-    </div>
-    
-    <div class="col-md-6 mb-3">
-        <label class="form-label">
-            <i data-lucide="briefcase" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-            Portafolio Personal
-        </label>
-        <input type="url" class="form-control" name="portfolio_url" 
-               value="{{ datos.portfolio_url|default:'' }}"
-               placeholder="https://tu-portfolio.com">
-    </div>
-</div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="twitter" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Twitter/X
+                                </label>
+                                {{ form.twitter_url }}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="briefcase" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Portafolio Personal
+                                </label>
+                                {{ form.portfolio_url }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i data-lucide="globe" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Sitio Web
+                            </label>
+                            {{ form.sitio_web }}
+                        </div>
+                        
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-primary btn-lg">
                                 <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>
@@ -225,7 +285,7 @@
         lucide.createIcons();
         
         const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('foto_perfil');
+        const fileInput = document.getElementById('{{ form.foto_perfil.id_for_label }}');
         const previewImage = document.getElementById('preview-image');
         
         // Click en la zona activa el input
