@@ -22,6 +22,14 @@ urlpatterns = [
     path('datos-personales/editar/', views.editar_datos_personales, name='editar_datos_personales'),
     
     # ==========================================
+    # 🎓 Gestión de Educación (NUEVO)
+    # ==========================================
+    path('educacion/', views.lista_educacion, name='lista_educacion'),
+    path('educacion/crear/', views.crear_educacion, name='crear_educacion'),
+    path('educacion/<int:educacion_id>/editar/', views.editar_educacion, name='editar_educacion'),
+    path('educacion/<int:educacion_id>/eliminar/', views.eliminar_educacion, name='eliminar_educacion'),
+    
+    # ==========================================
     # Gestión de Experiencia Laboral
     # ==========================================
     path('experiencias/', views.lista_experiencias, name='lista_experiencias'),
@@ -42,7 +50,7 @@ urlpatterns = [
     path('habilidades/<int:pk>/eliminar/', views.eliminar_habilidad, name='eliminar_habilidad'),
 
     # ==========================================
-    # Gestión de Venta Garage (AHORA DENTRO DE LA LISTA)
+    # Gestión de Venta Garage
     # ==========================================
     path('venta-garage/', views.lista_ventas_garage, name='lista_ventas_garage'),
     path('venta-garage/crear/', views.crear_venta_garage, name='crear_venta_garage'),

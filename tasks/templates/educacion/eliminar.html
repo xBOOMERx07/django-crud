@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3>
+                        <i data-lucide="alert-triangle"></i>
+                        Confirmar Eliminación
+                    </h3>
+                </div>
+                
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i data-lucide="alert-circle"></i>
+                        <strong>¿Estás seguro?</strong> Esta acción no se puede deshacer.
+                    </div>
+                    
+                    <h5>Educación a eliminar:</h5>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h6 class="card-title">{{ educacion.titulo_obtenido }}</h6>
+                            <p class="card-text">
+                                <strong>Institución:</strong> {{ educacion.institucion }}<br>
+                                <strong>Nivel:</strong> {{ educacion.get_nivel_educacion_display }}<br>
+                                <strong>Período:</strong> 
+                                {{ educacion.fecha_inicio|date:"m/Y" }} - 
+                                {% if educacion.actualmente_estudiando %}
+                                    Presente
+                                {% elif educacion.fecha_fin %}
+                                    {{ educacion.fecha_fin|date:"m/Y" }}
+                                {% else %}
+                                    No especificado
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'lista_educacion' %}" class="btn btn-secondary">
+                                <i data-lucide="arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i data-lucide="trash-2"></i> Sí, Eliminar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}

@@ -8,13 +8,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.db import IntegrityError
 from .models import (
     DatosPersonales, Direccion, ExperienciaLaboral, 
     Reconocimiento, CursoRealizado, ProductoAcademico,
-    ProductoLaboral, VentaGarage, Habilidad
+    ProductoLaboral, VentaGarage, Habilidad, Educacion
 )
-from .forms import DatosPersonalesForm  # ✅ IMPORTAR EL FORMULARIO
+from .forms import DatosPersonalesForm, EducacionForm
 
 # ==========================================
 # VISTA PÚBLICA DEL CV
@@ -28,6 +29,10 @@ def cv_publico(request, username):
     experiencias = ExperienciaLaboral.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_inicio_gestion')
     reconocimientos = Reconocimiento.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_reconocimiento')
     cursos = CursoRealizado.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_inicio')
+    
+    # 🎓 NUEVA LÍNEA: Cargar educaciones
+    educaciones = Educacion.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('fecha_inicio')
+    
     productos_academicos = ProductoAcademico.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_publicacion')
     productos_laborales = ProductoLaboral.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_producto')
     habilidades = Habilidad.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True)
@@ -41,6 +46,7 @@ def cv_publico(request, username):
         'experiencias': experiencias,
         'reconocimientos': reconocimientos,
         'cursos': cursos,
+        'educaciones': educaciones,  # 🎓 NUEVA LÍNEA
         'productos_academicos': productos_academicos,
         'productos_laborales': productos_laborales,
         'habilidades': habilidades,
@@ -105,7 +111,7 @@ def signout(request):
     return redirect('signin')
 
 # ==========================================
-# GESTIÓN: DATOS PERSONALES ✅ CORREGIDO
+# GESTIÓN: DATOS PERSONALES
 # ==========================================
 @login_required
 def editar_datos_personales(request):
@@ -118,7 +124,7 @@ def editar_datos_personales(request):
         if form.is_valid():
             # Guardar sin commitear para asignar el usuario
             datos = form.save(commit=False)
-            datos.user = request.user  # ✅ CRÍTICO: Asignar usuario actual
+            datos.user = request.user
             datos.save()
             return redirect('home')
         else:
@@ -136,6 +142,99 @@ def editar_datos_personales(request):
         'form': form,
         'datos': datos
     })
+
+
+# ==========================================
+# 🎓 GESTIÓN: EDUCACIÓN (NUEVAS VISTAS)
+# ==========================================
+
+@login_required
+def lista_educacion(request):
+    """Lista todas las educaciones del usuario ordenadas cronológicamente"""
+    educaciones = Educacion.objects.filter(user=request.user).order_by('fecha_inicio')
+    
+    return render(request, 'educacion/lista.html', {
+        'educaciones': educaciones,
+    })
+
+
+@login_required
+def crear_educacion(request):
+    """Crea una nueva educación"""
+    if request.method == 'POST':
+        form = EducacionForm(request.POST)
+        
+        if form.is_valid():
+            educacion = form.save(commit=False)
+            educacion.user = request.user
+            
+            # Si está actualmente estudiando, limpiar fecha_fin
+            if educacion.actualmente_estudiando:
+                educacion.fecha_fin = None
+                educacion.estado_estudio = 'en_curso'
+            
+            educacion.save()
+            messages.success(request, '✅ Educación agregada exitosamente')
+            return redirect('lista_educacion')
+        else:
+            messages.error(request, '❌ Por favor corrige los errores')
+    else:
+        form = EducacionForm()
+    
+    return render(request, 'educacion/form.html', {
+        'form': form,
+        'titulo': 'Agregar Educación',
+        'boton': 'Guardar',
+    })
+
+
+@login_required
+def editar_educacion(request, educacion_id):
+    """Edita una educación existente"""
+    educacion = get_object_or_404(Educacion, pk=educacion_id, user=request.user)
+    
+    if request.method == 'POST':
+        form = EducacionForm(request.POST, instance=educacion)
+        
+        if form.is_valid():
+            educacion = form.save(commit=False)
+            
+            # Si está actualmente estudiando, limpiar fecha_fin
+            if educacion.actualmente_estudiando:
+                educacion.fecha_fin = None
+                educacion.estado_estudio = 'en_curso'
+            
+            educacion.save()
+            messages.success(request, '✅ Educación actualizada exitosamente')
+            return redirect('lista_educacion')
+        else:
+            messages.error(request, '❌ Por favor corrige los errores')
+    else:
+        form = EducacionForm(instance=educacion)
+    
+    return render(request, 'educacion/form.html', {
+        'form': form,
+        'titulo': 'Editar Educación',
+        'boton': 'Actualizar',
+        'educacion': educacion,
+    })
+
+
+@login_required
+def eliminar_educacion(request, educacion_id):
+    """Elimina una educación"""
+    educacion = get_object_or_404(Educacion, pk=educacion_id, user=request.user)
+    
+    if request.method == 'POST':
+        titulo = educacion.titulo_obtenido
+        educacion.delete()
+        messages.success(request, f'✅ Educación "{titulo}" eliminada correctamente')
+        return redirect('lista_educacion')
+    
+    return render(request, 'educacion/eliminar.html', {
+        'educacion': educacion,
+    })
+
 
 # ==========================================
 # GESTIÓN: EXPERIENCIAS
@@ -281,6 +380,7 @@ def descargar_pdf(request, username):
         'datos_personales': datos_personales,
         'experiencias': ExperienciaLaboral.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_inicio_gestion'),
         'cursos': CursoRealizado.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_inicio'),
+        'educaciones': Educacion.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('fecha_inicio'),  # 🎓 NUEVA LÍNEA
         'habilidades': Habilidad.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True),
         'reconocimientos': Reconocimiento.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True),
         'productos_academicos': ProductoAcademico.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True),

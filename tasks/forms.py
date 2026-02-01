@@ -2,7 +2,7 @@ from django import forms
 from .models import (
     DatosPersonales, Direccion, ExperienciaLaboral,
     Reconocimiento, CursoRealizado, ProductoAcademico,
-    ProductoLaboral, VentaGarage, Habilidad
+    ProductoLaboral, VentaGarage, Habilidad, Educacion
 )
 
 # ==========================================
@@ -80,6 +80,86 @@ class DatosPersonalesForm(forms.ModelForm):
                 'accept': 'image/*'
             })
         }
+
+
+# ==========================================
+# 🎓 FORM: EDUCACIÓN (NUEVO)
+# ==========================================
+class EducacionForm(forms.ModelForm):
+    """Formulario para crear/editar estudios"""
+    
+    class Meta:
+        model = Educacion
+        exclude = ['user', 'fecha_creacion', 'fecha_actualizacion']
+        
+        widgets = {
+            'nivel_educacion': forms.Select(attrs={
+                'class': 'form-select',
+            }),
+            
+            'titulo_obtenido': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Bachiller en Ciencias, Ingeniero en Sistemas'
+            }),
+            
+            'institucion': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nombre de la institución educativa'
+            }),
+            
+            'fecha_inicio': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date',
+            }),
+            
+            'fecha_fin': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date',
+            }),
+            
+            'actualmente_estudiando': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'id': 'actualmente_estudiando_checkbox',
+            }),
+            
+            'estado_estudio': forms.Select(attrs={
+                'class': 'form-select',
+            }),
+            
+            'area_estudio': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Tecnología, Salud, Administración'
+            }),
+            
+            'ciudad': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ciudad donde estudiaste'
+            }),
+            
+            'pais': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe brevemente lo que estudiaste, proyectos destacados, logros...'
+            }),
+            
+            'calificacion_promedio': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: 9.5/10, Cum Laude, Sobresaliente'
+            }),
+            
+            'activar_para_que_se_vea_en_front': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+            }),
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # JavaScript para deshabilitar fecha_fin cuando está "actualmente estudiando"
+        self.fields['fecha_fin'].required = False
 
 
 # ==========================================

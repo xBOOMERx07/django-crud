@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3>
+                        <i data-lucide="graduation-cap"></i>
+                        {{ titulo }}
+                    </h3>
+                </div>
+                
+                <div class="card-body">
+                    <form method="POST" id="educacionForm">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <!-- Nivel de Educación -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nivel_educacion.id_for_label }}" class="form-label">
+                                    <i data-lucide="book-open"></i>
+                                    {{ form.nivel_educacion.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.nivel_educacion }}
+                                {% if form.nivel_educacion.errors %}
+                                <div class="text-danger">{{ form.nivel_educacion.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Título Obtenido -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.titulo_obtenido.id_for_label }}" class="form-label">
+                                    <i data-lucide="award"></i>
+                                    {{ form.titulo_obtenido.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.titulo_obtenido }}
+                                <small class="form-text text-muted">{{ form.titulo_obtenido.help_text }}</small>
+                                {% if form.titulo_obtenido.errors %}
+                                <div class="text-danger">{{ form.titulo_obtenido.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Institución -->
+                        <div class="mb-3">
+                            <label for="{{ form.institucion.id_for_label }}" class="form-label">
+                                <i data-lucide="building-2"></i>
+                                {{ form.institucion.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.institucion }}
+                            <small class="form-text text-muted">{{ form.institucion.help_text }}</small>
+                            {% if form.institucion.errors %}
+                            <div class="text-danger">{{ form.institucion.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Fecha Inicio -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha_inicio.id_for_label }}" class="form-label">
+                                    <i data-lucide="calendar"></i>
+                                    {{ form.fecha_inicio.label }}
+                                    <span class="text-danger">*</span>
+                                </label>
+                                {{ form.fecha_inicio }}
+                                {% if form.fecha_inicio.errors %}
+                                <div class="text-danger">{{ form.fecha_inicio.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Fecha Fin -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.fecha_fin.id_for_label }}" class="form-label">
+                                    <i data-lucide="calendar-check"></i>
+                                    {{ form.fecha_fin.label }}
+                                </label>
+                                {{ form.fecha_fin }}
+                                <small class="form-text text-muted">{{ form.fecha_fin.help_text }}</small>
+                                {% if form.fecha_fin.errors %}
+                                <div class="text-danger">{{ form.fecha_fin.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Actualmente Estudiando -->
+                        <div class="mb-3 form-check">
+                            {{ form.actualmente_estudiando }}
+                            <label class="form-check-label" for="{{ form.actualmente_estudiando.id_for_label }}">
+                                <i data-lucide="book-marked"></i>
+                                {{ form.actualmente_estudiando.label }}
+                            </label>
+                            <small class="form-text text-muted d-block">{{ form.actualmente_estudiando.help_text }}</small>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Estado Estudio -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.estado_estudio.id_for_label }}" class="form-label">
+                                    <i data-lucide="check-circle"></i>
+                                    {{ form.estado_estudio.label }}
+                                </label>
+                                {{ form.estado_estudio }}
+                                {% if form.estado_estudio.errors %}
+                                <div class="text-danger">{{ form.estado_estudio.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Área de Estudio -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.area_estudio.id_for_label }}" class="form-label">
+                                    <i data-lucide="layers"></i>
+                                    {{ form.area_estudio.label }}
+                                </label>
+                                {{ form.area_estudio }}
+                                <small class="form-text text-muted">{{ form.area_estudio.help_text }}</small>
+                                {% if form.area_estudio.errors %}
+                                <div class="text-danger">{{ form.area_estudio.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Ciudad -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.ciudad.id_for_label }}" class="form-label">
+                                    <i data-lucide="map-pin"></i>
+                                    {{ form.ciudad.label }}
+                                </label>
+                                {{ form.ciudad }}
+                                {% if form.ciudad.errors %}
+                                <div class="text-danger">{{ form.ciudad.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- País -->
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.pais.id_for_label }}" class="form-label">
+                                    <i data-lucide="globe"></i>
+                                    {{ form.pais.label }}
+                                </label>
+                                {{ form.pais }}
+                                {% if form.pais.errors %}
+                                <div class="text-danger">{{ form.pais.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Calificación/Promedio -->
+                        <div class="mb-3">
+                            <label for="{{ form.calificacion_promedio.id_for_label }}" class="form-label">
+                                <i data-lucide="star"></i>
+                                {{ form.calificacion_promedio.label }}
+                            </label>
+                            {{ form.calificacion_promedio }}
+                            <small class="form-text text-muted">{{ form.calificacion_promedio.help_text }}</small>
+                            {% if form.calificacion_promedio.errors %}
+                            <div class="text-danger">{{ form.calificacion_promedio.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                                <i data-lucide="file-text"></i>
+                                {{ form.descripcion.label }}
+                            </label>
+                            {{ form.descripcion }}
+                            <small class="form-text text-muted">{{ form.descripcion.help_text }}</small>
+                            {% if form.descripcion.errors %}
+                            <div class="text-danger">{{ form.descripcion.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Mostrar en CV -->
+                        <div class="mb-3 form-check">
+                            {{ form.activar_para_que_se_vea_en_front }}
+                            <label class="form-check-label" for="{{ form.activar_para_que_se_vea_en_front.id_for_label }}">
+                                <i data-lucide="eye"></i>
+                                {{ form.activar_para_que_se_vea_en_front.label }}
+                            </label>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'lista_educacion' %}" class="btn btn-secondary">
+                                <i data-lucide="arrow-left"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="save"></i> {{ boton }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Inicializar iconos
+    lucide.createIcons();
+    
+    // Controlar fecha_fin cuando se marca "actualmente estudiando"
+    const checkboxActualmente = document.getElementById('actualmente_estudiando_checkbox');
+    const fechaFinInput = document.querySelector('input[name="fecha_fin"]');
+    
+    if (checkboxActualmente && fechaFinInput) {
+        checkboxActualmente.addEventListener('change', function() {
+            if (this.checked) {
+                fechaFinInput.value = '';
+                fechaFinInput.disabled = true;
+                fechaFinInput.parentElement.querySelector('label').classList.add('text-muted');
+            } else {
+                fechaFinInput.disabled = false;
+                fechaFinInput.parentElement.querySelector('label').classList.remove('text-muted');
+            }
+        });
+        
+        // Aplicar estado inicial
+        if (checkboxActualmente.checked) {
+            fechaFinInput.disabled = true;
+            fechaFinInput.parentElement.querySelector('label').classList.add('text-muted');
+        }
+    }
+</script>
+{% endblock %}
