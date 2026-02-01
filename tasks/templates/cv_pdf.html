@@ -8,102 +8,166 @@
         h2 { font-size: 13pt; border-bottom: 1px solid #ccc; padding-bottom: 3px; margin-top: 15px; }
         .subtitle { text-align: center; font-size: 13pt; color: #2563eb; margin-bottom: 5px; }
         .contact { text-align: center; font-size: 9pt; color: #666; margin-bottom: 20px; }
-        .item { margin-bottom: 10px; }
+        .item { margin-bottom: 10px; page-break-inside: avoid; }
         .item-title { font-weight: bold; }
         .item-subtitle { color: #2563eb; }
         .item-meta { font-size: 9pt; color: #666; }
         table { width: 100%; }
         td { padding: 3px; }
+        
+        /* Evitar que las secciones se rompan entre páginas */
+        .seccion { page-break-inside: avoid; }
     </style>
 </head>
 <body>
     {% if datos_personales %}
     
+    <!-- ========================================== -->
+    <!-- 1. DATOS PERSONALES (SIEMPRE SE INCLUYE)  -->
+    <!-- ========================================== -->
     <h1>{{ datos_personales.nombre_completo|upper }}</h1>
-    {% if datos_personales.descripcion_perfil %}
-    <div class="subtitle">{{ datos_personales.descripcion_perfil }}</div>
+    
+    {% if datos_personales.titulo_profesional %}
+    <div class="subtitle">{{ datos_personales.titulo_profesional }}</div>
     {% endif %}
+    
+    {% if datos_personales.descripcion_perfil %}
+    <div class="contact" style="text-align: center; margin-bottom: 15px; line-height: 1.4;">
+        {{ datos_personales.descripcion_perfil }}
+    </div>
+    {% endif %}
+    
     <div class="contact">
         {% if datos_personales.email_personal %}{{ datos_personales.email_personal }} | {% endif %}
         {% if datos_personales.telefono_convencional %}{{ datos_personales.telefono_convencional }}{% endif %}
     </div>
     
-    <h2>INFORMACIÓN PERSONAL</h2>
-    <table>
-        <tr>
-            <td><strong>Cédula:</strong> {{ datos_personales.numero_cedula }}</td>
-            <td><strong>Nacimiento:</strong> {{ datos_personales.fecha_nacimiento|date:"d/m/Y" }} ({{ datos_personales.edad }} años)</td>
-        </tr>
-        <tr>
-            <td><strong>Estado Civil:</strong> {{ datos_personales.estado_civil }}</td>
-            <td><strong>Nacionalidad:</strong> {{ datos_personales.nacionalidad }}</td>
-        </tr>
-    </table>
+    <div class="seccion">
+        <h2>INFORMACIÓN PERSONAL</h2>
+        <table>
+            <tr>
+                <td><strong>Cédula:</strong> {{ datos_personales.numero_cedula }}</td>
+                <td><strong>Nacimiento:</strong> {{ datos_personales.fecha_nacimiento|date:"d/m/Y" }} ({{ datos_personales.edad }} años)</td>
+            </tr>
+            <tr>
+                <td><strong>Estado Civil:</strong> {{ datos_personales.estado_civil }}</td>
+                <td><strong>Nacionalidad:</strong> {{ datos_personales.nacionalidad }}</td>
+            </tr>
+            {% if datos_personales.nivel_educacion %}
+            <tr>
+                <td colspan="2"><strong>Nivel de Educación:</strong> {{ datos_personales.get_nivel_educacion_display }}</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
     
-    {% if experiencias %}
-    <h2>EXPERIENCIA LABORAL</h2>
-    {% for exp in experiencias %}
-    <div class="item">
-        <div class="item-title">{{ exp.cargo_desempenado }}</div>
-        <div class="item-subtitle">{{ exp.nombre_empresa }}</div>
-        <div class="item-meta">
-            {{ exp.fecha_inicio_gestion|date:"M Y" }} - 
-            {% if exp.actualmente_trabajando %}Actualidad{% else %}{{ exp.fecha_fin_gestion|date:"M Y" }}{% endif %}
+    <!-- ========================================== -->
+    <!-- 2. EXPERIENCIA LABORAL (SI ESTÁ SELECCIONADA) -->
+    <!-- ========================================== -->
+    {% if incluir_experiencias and experiencias %}
+    <div class="seccion">
+        <h2>EXPERIENCIA LABORAL</h2>
+        {% for exp in experiencias %}
+        <div class="item">
+            <div class="item-title">{{ exp.cargo_desempenado }}</div>
+            <div class="item-subtitle">{{ exp.nombre_empresa }}</div>
+            <div class="item-meta">
+                {{ exp.fecha_inicio_gestion|date:"M Y" }} - 
+                {% if exp.actualmente_trabajando %}Actualidad{% else %}{{ exp.fecha_fin_gestion|date:"M Y" }}{% endif %}
+            </div>
+            {% if exp.descripcion_funciones %}
+            <p>{{ exp.descripcion_funciones }}</p>
+            {% endif %}
         </div>
-        <p>{{ exp.descripcion_funciones }}</p>
+        {% endfor %}
     </div>
-    {% endfor %}
     {% endif %}
     
-    {% if habilidades %}
-    <h2>HABILIDADES</h2>
-    {% for hab in habilidades %}
-    <strong>{{ hab.nombre }}</strong> - {{ hab.get_nivel_display }}{% if not forloop.last %} | {% endif %}
-    {% endfor %}
+    <!-- ========================================== -->
+    <!-- 3. CURSOS (SI ESTÁN SELECCIONADOS)        -->
+    <!-- ========================================== -->
+    {% if incluir_cursos and cursos %}
+    <div class="seccion">
+        <h2>CURSOS Y CAPACITACIONES</h2>
+        {% for curso in cursos %}
+        <div class="item">
+            <div class="item-title">{{ curso.nombre_curso }}</div>
+            <div class="item-subtitle">{{ curso.entidad_patrocinadora }}</div>
+            <div class="item-meta">{{ curso.total_horas }} horas | {{ curso.fecha_inicio|date:"M Y" }}</div>
+            {% if curso.descripcion_curso %}
+            <p>{{ curso.descripcion_curso }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
     
-    {% if cursos %}
-    <h2>CURSOS Y CAPACITACIONES</h2>
-    {% for curso in cursos %}
-    <div class="item">
-        <div class="item-title">{{ curso.nombre_curso }}</div>
-        <div class="item-subtitle">{{ curso.entidad_patrocinadora }}</div>
-        <div class="item-meta">{{ curso.total_horas }} horas | {{ curso.fecha_inicio|date:"M Y" }}</div>
-        <p>{{ curso.descripcion_curso }}</p>
+    <!-- ========================================== -->
+    <!-- 4. RECONOCIMIENTOS (SI ESTÁN SELECCIONADOS) -->
+    <!-- ========================================== -->
+    {% if incluir_reconocimientos and reconocimientos %}
+    <div class="seccion">
+        <h2>RECONOCIMIENTOS</h2>
+        {% for rec in reconocimientos %}
+        <div class="item">
+            <div class="item-title">{{ rec.tipo_reconocimiento }}</div>
+            <div class="item-subtitle">{{ rec.entidad_patrocinadora }} - {{ rec.fecha_reconocimiento|date:"M Y" }}</div>
+            {% if rec.descripcion_reconocimiento %}
+            <p>{{ rec.descripcion_reconocimiento }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
     {% endif %}
     
-    {% if reconocimientos %}
-    <h2>RECONOCIMIENTOS</h2>
-    {% for rec in reconocimientos %}
-    <div class="item">
-        <div class="item-title">{{ rec.tipo_reconocimiento }}</div>
-        <div class="item-subtitle">{{ rec.entidad_patrocinadora }} - {{ rec.fecha_reconocimiento|date:"M Y" }}</div>
-        <p>{{ rec.descripcion_reconocimiento }}</p>
+    <!-- ========================================== -->
+    <!-- 5. PRODUCTOS ACADÉMICOS (SI ESTÁN SELECCIONADOS) -->
+    <!-- ========================================== -->
+    {% if incluir_productos_academicos and productos_academicos %}
+    <div class="seccion">
+        <h2>PRODUCTOS ACADÉMICOS</h2>
+        {% for prod in productos_academicos %}
+        <div class="item">
+            <div class="item-title">{{ prod.nombre_recurso }}</div>
+            <div class="item-subtitle">{{ prod.clasificador }} - {{ prod.fecha_publicacion|date:"M Y" }}</div>
+            {% if prod.descripcion %}
+            <p>{{ prod.descripcion }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
     {% endif %}
     
-    {% if productos_academicos %}
-    <h2>PRODUCTOS ACADÉMICOS</h2>
-    {% for prod in productos_academicos %}
-    <div class="item">
-        <div class="item-title">{{ prod.nombre_recurso }}</div>
-        <div class="item-subtitle">{{ prod.clasificador }}</div>
-        <p>{{ prod.descripcion }}</p>
+    <!-- ========================================== -->
+    <!-- 6. PRODUCTOS LABORALES (SI ESTÁN SELECCIONADOS) -->
+    <!-- ========================================== -->
+    {% if incluir_productos_laborales and productos_laborales %}
+    <div class="seccion">
+        <h2>PRODUCTOS LABORALES</h2>
+        {% for prod in productos_laborales %}
+        <div class="item">
+            <div class="item-title">{{ prod.nombre_producto }}</div>
+            <div class="item-meta">{{ prod.fecha_producto|date:"M Y" }}</div>
+            {% if prod.descripcion %}
+            <p>{{ prod.descripcion }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
     {% endif %}
     
-    {% if productos_laborales %}
-    <h2>PRODUCTOS LABORALES</h2>
-    {% for prod in productos_laborales %}
-    <div class="item">
-        <div class="item-title">{{ prod.nombre_producto }}</div>
-        <p>{{ prod.descripcion }}</p>
+    <!-- ========================================== -->
+    <!-- 7. HABILIDADES (SI ESTÁN SELECCIONADAS)   -->
+    <!-- ========================================== -->
+    {% if incluir_habilidades and habilidades %}
+    <div class="seccion">
+        <h2>HABILIDADES</h2>
+        <p>
+        {% for hab in habilidades %}
+            <strong>{{ hab.nombre }}</strong> - {{ hab.get_nivel_display }}{% if not forloop.last %} | {% endif %}
+        {% endfor %}
+        </p>
     </div>
-    {% endfor %}
     {% endif %}
     
     {% else %}

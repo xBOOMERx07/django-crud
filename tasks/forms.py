@@ -2,7 +2,7 @@ from django import forms
 from .models import (
     DatosPersonales, Direccion, ExperienciaLaboral,
     Reconocimiento, CursoRealizado, ProductoAcademico,
-    ProductoLaboral, VentaGarage, Habilidad, Educacion
+    ProductoLaboral, VentaGarage, Habilidad
 )
 
 # ==========================================
@@ -68,98 +68,65 @@ class DatosPersonalesForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'https://miportfolio.com'
             }),
-            'descripcion_perfil': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: Ingeniero en Sistemas'
+            
+            # 🎓 CAMPOS DE EDUCACIÓN Y TÍTULO
+            'nivel_educacion': forms.Select(attrs={
+                'class': 'form-select',
             }),
+            
+            'titulo_profesional': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ej: Ingeniero en Sistemas, Ama de Casa, Licenciado en Administración',
+                'maxlength': '80'
+            }),
+            
+            'descripcion_perfil': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 6,
+                'placeholder': 'Escribe una descripción amplia sobre ti, tu experiencia, tus objetivos profesionales, tus pasiones...'
+            }),
+            
             'perfil_activo': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
             'foto_perfil': forms.FileInput(attrs={
                 'class': 'form-control',
                 'accept': 'image/*'
-            })
-        }
-
-
-# ==========================================
-# 🎓 FORM: EDUCACIÓN (NUEVO)
-# ==========================================
-class EducacionForm(forms.ModelForm):
-    """Formulario para crear/editar estudios"""
-    
-    class Meta:
-        model = Educacion
-        exclude = ['user', 'fecha_creacion', 'fecha_actualizacion']
-        
-        widgets = {
-            'nivel_educacion': forms.Select(attrs={
-                'class': 'form-select',
             }),
             
-            'titulo_obtenido': forms.TextInput(attrs={
+            # Redes sociales
+            'linkedin_url': forms.URLInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Ej: Bachiller en Ciencias, Ingeniero en Sistemas'
+                'placeholder': 'https://linkedin.com/in/tu-perfil'
             }),
-            
-            'institucion': forms.TextInput(attrs={
+            'github_url': forms.URLInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Nombre de la institución educativa'
+                'placeholder': 'https://github.com/tu-usuario'
             }),
-            
-            'fecha_inicio': forms.DateInput(attrs={
+            'twitter_url': forms.URLInput(attrs={
                 'class': 'form-control',
-                'type': 'date',
+                'placeholder': 'https://twitter.com/tu-usuario'
             }),
-            
-            'fecha_fin': forms.DateInput(attrs={
+            'portfolio_url': forms.URLInput(attrs={
                 'class': 'form-control',
-                'type': 'date',
+                'placeholder': 'https://tu-portafolio.com'
             }),
             
-            'actualmente_estudiando': forms.CheckboxInput(attrs={
-                'class': 'form-check-input',
-                'id': 'actualmente_estudiando_checkbox',
-            }),
-            
-            'estado_estudio': forms.Select(attrs={
-                'class': 'form-select',
-            }),
-            
-            'area_estudio': forms.TextInput(attrs={
+            # 📱 REDES SOCIALES ADICIONALES
+            'facebook_url': forms.URLInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Ej: Tecnología, Salud, Administración'
+                'placeholder': 'https://facebook.com/tu-perfil'
             }),
-            
-            'ciudad': forms.TextInput(attrs={
+            'instagram_url': forms.URLInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Ciudad donde estudiaste'
+                'placeholder': 'https://instagram.com/tu-usuario'
             }),
-            
-            'pais': forms.TextInput(attrs={
+            'whatsapp_numero': forms.TextInput(attrs={
                 'class': 'form-control',
-            }),
-            
-            'descripcion': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Describe brevemente lo que estudiaste, proyectos destacados, logros...'
-            }),
-            
-            'calificacion_promedio': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Ej: 9.5/10, Cum Laude, Sobresaliente'
-            }),
-            
-            'activar_para_que_se_vea_en_front': forms.CheckboxInput(attrs={
-                'class': 'form-check-input',
+                'placeholder': '+593987654321',
+                'maxlength': '20'
             }),
         }
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # JavaScript para deshabilitar fecha_fin cuando está "actualmente estudiando"
-        self.fields['fecha_fin'].required = False
 
 
 # ==========================================

@@ -22,14 +22,6 @@ urlpatterns = [
     path('datos-personales/editar/', views.editar_datos_personales, name='editar_datos_personales'),
     
     # ==========================================
-    # 🎓 Gestión de Educación (NUEVO)
-    # ==========================================
-    path('educacion/', views.lista_educacion, name='lista_educacion'),
-    path('educacion/crear/', views.crear_educacion, name='crear_educacion'),
-    path('educacion/<int:educacion_id>/editar/', views.editar_educacion, name='editar_educacion'),
-    path('educacion/<int:educacion_id>/eliminar/', views.eliminar_educacion, name='eliminar_educacion'),
-    
-    # ==========================================
     # Gestión de Experiencia Laboral
     # ==========================================
     path('experiencias/', views.lista_experiencias, name='lista_experiencias'),

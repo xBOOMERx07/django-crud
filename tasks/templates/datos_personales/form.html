@@ -71,14 +71,39 @@
                         
                         <hr class="my-4">
                         
-                        <!-- PERFIL ACTIVO -->
+                        <!-- 🎓 NUEVOS CAMPOS: EDUCACIÓN Y TÍTULO PROFESIONAL -->
+                        <div class="alert alert-info mb-4">
+                            <strong><i data-lucide="info" style="width: 16px; height: 16px;"></i> Información Profesional</strong>
+                            <p class="mb-0 mt-2">Esta información aparecerá destacada en tu CV público</p>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">
+                                    <i data-lucide="graduation-cap" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Nivel de Educación
+                                </label>
+                                {{ form.nivel_educacion }}
+                                <small class="text-muted">Selecciona tu máximo nivel educativo alcanzado</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">
+                                    <i data-lucide="award" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Título Profesional
+                                </label>
+                                {{ form.titulo_profesional }}
+                                <small class="text-muted">Aparecerá debajo de tu nombre (ej: "Ingeniero en Sistemas")</small>
+                            </div>
+                        </div>
+                        
                         <div class="mb-4">
                             <label class="form-label">
-                                <i data-lucide="settings" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                <i data-lucide="file-text" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                                 Descripción del Perfil
                             </label>
                             {{ form.descripcion_perfil }}
-                            <small class="text-muted">Aparecerá como título en tu CV público</small>
+                            <small class="text-muted">Escribe una descripción amplia sobre ti, tu experiencia, objetivos profesionales, pasiones...</small>
                         </div>
                         
                         <div class="form-check mb-4">
@@ -90,6 +115,10 @@
                         </div>
                         
                         <hr class="my-4">
+                        <h5 class="mb-3">
+                            <i data-lucide="user" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                            Información Personal
+                        </h5>
                         
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -259,12 +288,41 @@
                             </div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label class="form-label">
-                                <i data-lucide="globe" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                Sitio Web
-                            </label>
-                            {{ form.sitio_web }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="facebook" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Facebook
+                                </label>
+                                {{ form.facebook_url }}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="instagram" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Instagram
+                                </label>
+                                {{ form.instagram_url }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="message-circle" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Número WhatsApp
+                                </label>
+                                {{ form.whatsapp_numero }}
+                                <small class="text-muted">Incluye código de país, ej: +593987654321</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">
+                                    <i data-lucide="globe" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Sitio Web
+                                </label>
+                                {{ form.sitio_web }}
+                            </div>
                         </div>
                         
                         <div class="d-grid gap-2 mt-4">

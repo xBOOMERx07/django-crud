@@ -30,8 +30,38 @@ class DatosPersonales(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='datos_personales')
     
     # Campos del esquema del profesor
-    descripcion_perfil = models.CharField(max_length=50, blank=True, help_text="Título profesional o descripción")
+    descripcion_perfil = models.TextField(blank=True, help_text="Descripción amplia sobre ti (varios párrafos permitidos)")
     perfil_activo = models.BooleanField(default=True, help_text="Activar/desactivar perfil completo")
+    
+    # 🎓 CAMPOS: Educación y Título Profesional
+    nivel_educacion = models.CharField(
+        max_length=50,
+        choices=[
+            ('sin_estudios', 'Sin estudios formales'),
+            ('primaria_incompleta', 'Primaria incompleta'),
+            ('primaria_completa', 'Primaria completa'),
+            ('secundaria_incompleta', 'Secundaria incompleta'),
+            ('bachiller', 'Bachiller'),
+            ('tecnico', 'Técnico/Tecnólogo'),
+            ('universitario_incompleto', 'Universitario incompleto'),
+            ('tercer_nivel', 'Tercer Nivel (Licenciatura/Ingeniería)'),
+            ('cuarto_nivel', 'Cuarto Nivel (Especialización)'),
+            ('maestria', 'Maestría'),
+            ('doctorado', 'Doctorado/PhD'),
+        ],
+        blank=True,
+        default='',
+        verbose_name="Nivel de Educación",
+        help_text="Máximo nivel educativo alcanzado"
+    )
+    
+    titulo_profesional = models.CharField(
+        max_length=80,
+        blank=True,
+        default='',
+        verbose_name="Título Profesional",
+        help_text='Título que aparecerá debajo de tu nombre en el CV (ej: "Ingeniero en Sistemas", "Ama de Casa")'
+    )
     
     # Nombre separado (como pide el profesor)
     apellidos = models.CharField(max_length=60)
@@ -73,6 +103,29 @@ class DatosPersonales(models.Model):
     github_url = models.URLField(max_length=200, blank=True, verbose_name="GitHub")  
     twitter_url = models.URLField(max_length=200, blank=True, verbose_name="Twitter/X")
     portfolio_url = models.URLField(max_length=200, blank=True, verbose_name="Portafolio Personal")
+    
+    # 📱 REDES SOCIALES ADICIONALES
+    facebook_url = models.URLField(
+        max_length=200,
+        blank=True,
+        default='',
+        verbose_name="Facebook URL"
+    )
+    
+    instagram_url = models.URLField(
+        max_length=200,
+        blank=True,
+        default='',
+        verbose_name="Instagram URL"
+    )
+    
+    whatsapp_numero = models.CharField(
+        max_length=20,
+        blank=True,
+        default='',
+        verbose_name="Número WhatsApp",
+        help_text='Número con código de país, ej: +593987654321'
+    )
     
     # Campos adicionales (mejoras)
     email_personal = models.EmailField(blank=True)
@@ -209,179 +262,6 @@ class Direccion(models.Model):
             raise ValidationError({
                 'direccion_completa': 'La dirección no puede estar vacía.'
             })
-
-
-# ==========================================
-# 🎓 NUEVA TABLA: EDUCACIÓN
-# ==========================================
-class Educacion(models.Model):
-    """
-    Modelo para registrar estudios realizados o en curso.
-    Similar a ExperienciaLaboral pero para educación.
-    """
-    NIVEL_EDUCACION_CHOICES = [
-        ('primaria', 'Primaria'),
-        ('secundaria', 'Secundaria/Bachillerato'),
-        ('tecnico', 'Técnico/Tecnólogo'),
-        ('tercer_nivel', 'Tercer Nivel (Licenciatura/Ingeniería)'),
-        ('especializacion', 'Especialización'),
-        ('maestria', 'Maestría'),
-        ('doctorado', 'Doctorado/PhD'),
-        ('curso', 'Curso/Certificación'),
-        ('diplomado', 'Diplomado'),
-    ]
-    
-    # Relación con usuario
-    user = models.ForeignKey(
-        User, 
-        on_delete=models.CASCADE, 
-        related_name='educaciones'
-    )
-    
-    # Información básica
-    nivel_educacion = models.CharField(
-        max_length=50,
-        choices=NIVEL_EDUCACION_CHOICES,
-        verbose_name="Nivel de Educación"
-    )
-    
-    titulo_obtenido = models.CharField(
-        max_length=150,
-        verbose_name="Título o Certificación Obtenida",
-        help_text="Ej: Bachiller en Ciencias, Ingeniero en Sistemas, Master en IA"
-    )
-    
-    institucion = models.CharField(
-        max_length=150,
-        verbose_name="Institución Educativa",
-        help_text="Nombre de la escuela, colegio, universidad o instituto"
-    )
-    
-    # Fechas
-    fecha_inicio = models.DateField(
-        verbose_name="Fecha de Inicio",
-        help_text="Mes y año en que iniciaste"
-    )
-    
-    fecha_fin = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name="Fecha de Finalización",
-        help_text="Déjalo vacío si aún estás estudiando"
-    )
-    
-    actualmente_estudiando = models.BooleanField(
-        default=False,
-        verbose_name="Actualmente estudiando aquí",
-        help_text="Marca esta opción si aún continúas estudiando"
-    )
-    
-    # Estado
-    estado_estudio = models.CharField(
-        max_length=20,
-        choices=[
-            ('culminado', 'Culminado'),
-            ('en_curso', 'En Curso'),
-            ('inconcluso', 'Inconcluso'),
-        ],
-        default='culminado',
-        verbose_name="Estado del Estudio"
-    )
-    
-    # Detalles adicionales
-    area_estudio = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name="Área de Estudio",
-        help_text="Ej: Tecnología, Salud, Administración, Arte"
-    )
-    
-    ciudad = models.CharField(
-        max_length=100,
-        blank=True,
-        verbose_name="Ciudad",
-        help_text="Ciudad donde estudiaste"
-    )
-    
-    pais = models.CharField(
-        max_length=100,
-        default="Ecuador",
-        verbose_name="País"
-    )
-    
-    descripcion = models.TextField(
-        blank=True,
-        verbose_name="Descripción",
-        help_text="Materias destacadas, proyectos, logros académicos"
-    )
-    
-    # Calificación/Promedio (opcional)
-    calificacion_promedio = models.CharField(
-        max_length=50,
-        blank=True,
-        verbose_name="Calificación/Promedio",
-        help_text="Ej: 9.5/10, Cum Laude, Sobresaliente"
-    )
-    
-    # Control de visibilidad
-    activar_para_que_se_vea_en_front = models.BooleanField(
-        default=True,
-        verbose_name="Mostrar en CV público"
-    )
-    
-    # Metadata
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-    fecha_actualizacion = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        verbose_name = "Educación"
-        verbose_name_plural = "Educaciones"
-        ordering = ['fecha_inicio']  # De más antiguo a más reciente
-    
-    def __str__(self):
-        estado = "en curso" if self.actualmente_estudiando else "finalizado"
-        return f"{self.titulo_obtenido} - {self.institucion} ({estado})"
-    
-    def duracion(self):
-        """Calcula la duración en meses"""
-        if self.actualmente_estudiando:
-            fin = date.today()
-        else:
-            fin = self.fecha_fin or self.fecha_inicio
-        
-        delta = fin - self.fecha_inicio
-        return delta.days // 30  # Aproximado en meses
-    
-    def clean(self):
-        """Validaciones personalizadas"""
-        super().clean()
-        
-        # Validar que fecha_fin no sea anterior a fecha_inicio
-        if self.fecha_inicio and self.fecha_fin:
-            if self.fecha_fin < self.fecha_inicio:
-                raise ValidationError({
-                    'fecha_fin': 'La fecha de finalización no puede ser anterior a la fecha de inicio.'
-                })
-        
-        # Si actualmente estudiando, no debe tener fecha_fin
-        if self.actualmente_estudiando and self.fecha_fin:
-            raise ValidationError({
-                'fecha_fin': 'No puede tener fecha de fin si actualmente está estudiando.',
-                'actualmente_estudiando': 'Desmarque esta opción si ya tiene fecha de fin.'
-            })
-        
-        # Validar que las fechas no sean futuras
-        if self.fecha_inicio and self.fecha_inicio > date.today():
-            raise ValidationError({
-                'fecha_inicio': 'La fecha de inicio no puede ser futura.'
-            })
-        
-        # Validar campos no vacíos
-        if self.titulo_obtenido and not self.titulo_obtenido.strip():
-            raise ValidationError({'titulo_obtenido': 'El título no puede estar vacío.'})
-        
-        if self.institucion and not self.institucion.strip():
-            raise ValidationError({'institucion': 'La institución no puede estar vacía.'})
 
 
 # ==========================================

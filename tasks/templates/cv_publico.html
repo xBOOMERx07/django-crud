@@ -35,10 +35,19 @@
                         
                         <!-- COLUMNA DERECHA: INFO -->
                         <div class="col-md-8">
+                            <!-- NOMBRE COMPLETO -->
                             <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">{{ datos_personales.nombre_completo }}</h1>
                             
+                            <!-- 🎓 TÍTULO PROFESIONAL -->
+                            {% if datos_personales.titulo_profesional %}
+                            <h2 style="font-size: 1.8rem; color: var(--accent-cyan); margin-bottom: 1rem; font-weight: 500;">
+                                {{ datos_personales.titulo_profesional }}
+                            </h2>
+                            {% endif %}
+                            
+                            <!-- DESCRIPCIÓN PERFIL -->
                             {% if datos_personales.descripcion_perfil %}
-                            <p style="font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 2rem;">{{ datos_personales.descripcion_perfil }}</p>
+                            <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6; white-space: pre-line;">{{ datos_personales.descripcion_perfil }}</p>
                             {% endif %}
                             
                             <div class="row mt-4">
@@ -72,12 +81,28 @@
                                     <i data-lucide="globe" style="width: 16px; height: 16px;"></i> Portafolio
                                 </a>
                                 {% endif %}
+                                {% if datos_personales.facebook_url %}
+                                <a href="{{ datos_personales.facebook_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i data-lucide="facebook" style="width: 16px; height: 16px;"></i> Facebook
+                                </a>
+                                {% endif %}
+                                {% if datos_personales.instagram_url %}
+                                <a href="{{ datos_personales.instagram_url }}" target="_blank" class="btn btn-outline-danger btn-sm">
+                                    <i data-lucide="instagram" style="width: 16px; height: 16px;"></i> Instagram
+                                </a>
+                                {% endif %}
+                                {% if datos_personales.whatsapp_numero %}
+                                <a href="https://wa.me/{{ datos_personales.whatsapp_numero }}" target="_blank" class="btn btn-outline-success btn-sm">
+                                    <i data-lucide="message-circle" style="width: 16px; height: 16px;"></i> WhatsApp
+                                </a>
+                                {% endif %}
                             </div>
                             
+                            <!-- 📄 BOTÓN PARA ABRIR MODAL DE PDF -->
                             <div class="mt-4">
-                                <a href="{% url 'descargar_pdf' username %}" target="_blank" class="btn btn-danger btn-lg shadow">
+                                <button type="button" class="btn btn-danger btn-lg shadow" data-bs-toggle="modal" data-bs-target="#modalPDF">
                                     <i data-lucide="file-down"></i> Descargar CV en PDF
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -111,6 +136,14 @@
                             <strong><i data-lucide="flag" style="width: 18px; height: 18px;"></i> Nacionalidad:</strong>
                             <span class="ms-2">{{ datos_personales.nacionalidad|default:"Ecuatoriana" }}</span>
                         </div>
+                        
+                        <!-- 🎓 MOSTRAR NIVEL DE EDUCACIÓN SI EXISTE -->
+                        {% if datos_personales.nivel_educacion %}
+                        <div class="col-md-12 mb-3">
+                            <strong><i data-lucide="graduation-cap" style="width: 18px; height: 18px;"></i> Nivel de Educación:</strong>
+                            <span class="ms-2">{{ datos_personales.get_nivel_educacion_display }}</span>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -259,9 +292,165 @@
     {% endif %}
 </div>
 
+<!-- ========================================== -->
+<!-- 📄 MODAL: PERSONALIZAR SECCIONES DEL PDF  -->
+<!-- ========================================== -->
+<div class="modal fade" id="modalPDF" tabindex="-1" aria-labelledby="modalPDFLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); color: white;">
+                <h5 class="modal-title" id="modalPDFLabel">
+                    <i data-lucide="file-text" style="width: 24px; height: 24px; vertical-align: middle;"></i>
+                    Personaliza tu CV
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-4">
+                    <i data-lucide="info" style="width: 16px; height: 16px;"></i>
+                    Selecciona las secciones que deseas incluir en tu CV. Los <strong>Datos Personales</strong> siempre se incluyen.
+                </p>
+                
+                <form id="formPDF" method="GET" action="{% url 'descargar_pdf' username %}" target="_blank">
+                    
+                    <!-- DATOS PERSONALES (OBLIGATORIO) -->
+                    <div class="form-check mb-3 p-3 bg-light rounded border">
+                        <input class="form-check-input" type="checkbox" checked disabled>
+                        <label class="form-check-label fw-bold">
+                            <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+                            Datos Personales
+                            <span class="badge bg-primary ms-2">Obligatorio</span>
+                        </label>
+                    </div>
+                    
+                    <!-- SECCIONES OPCIONALES -->
+                    <div class="mb-3">
+                        <label class="fw-bold mb-2">Secciones Opcionales:</label>
+                        
+                        {% if experiencias %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input seccion-opcional" type="checkbox" name="incluir_experiencias" id="checkExperiencias">
+                            <label class="form-check-label" for="checkExperiencias">
+                                <i data-lucide="briefcase" style="width: 16px; height: 16px;"></i>
+                                Experiencia Laboral
+                                <span class="badge bg-secondary ms-1">{{ experiencias|length }}</span>
+                            </label>
+                        </div>
+                        {% endif %}
+                        
+                        {% if cursos %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input seccion-opcional" type="checkbox" name="incluir_cursos" id="checkCursos">
+                            <label class="form-check-label" for="checkCursos">
+                                <i data-lucide="book-open" style="width: 16px; height: 16px;"></i>
+                                Cursos y Certificados
+                                <span class="badge bg-secondary ms-1">{{ cursos|length }}</span>
+                            </label>
+                        </div>
+                        {% endif %}
+                        
+                        {% if reconocimientos %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input seccion-opcional" type="checkbox" name="incluir_reconocimientos" id="checkReconocimientos">
+                            <label class="form-check-label" for="checkReconocimientos">
+                                <i data-lucide="award" style="width: 16px; height: 16px;"></i>
+                                Reconocimientos
+                                <span class="badge bg-secondary ms-1">{{ reconocimientos|length }}</span>
+                            </label>
+                        </div>
+                        {% endif %}
+                        
+                        {% if productos_academicos %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input seccion-opcional" type="checkbox" name="incluir_productos_academicos" id="checkProdAcademicos">
+                            <label class="form-check-label" for="checkProdAcademicos">
+                                <i data-lucide="book" style="width: 16px; height: 16px;"></i>
+                                Productos Académicos
+                                <span class="badge bg-secondary ms-1">{{ productos_academicos|length }}</span>
+                            </label>
+                        </div>
+                        {% endif %}
+                        
+                        {% if productos_laborales %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input seccion-opcional" type="checkbox" name="incluir_productos_laborales" id="checkProdLaborales">
+                            <label class="form-check-label" for="checkProdLaborales">
+                                <i data-lucide="package" style="width: 16px; height: 16px;"></i>
+                                Productos Laborales
+                                <span class="badge bg-secondary ms-1">{{ productos_laborales|length }}</span>
+                            </label>
+                        </div>
+                        {% endif %}
+                        
+                        {% if habilidades %}
+                        <div class="form-check mb-2">
+                            <input class="form-check-input seccion-opcional" type="checkbox" name="incluir_habilidades" id="checkHabilidades">
+                            <label class="form-check-label" for="checkHabilidades">
+                                <i data-lucide="zap" style="width: 16px; height: 16px;"></i>
+                                Habilidades
+                                <span class="badge bg-secondary ms-1">{{ habilidades|length }}</span>
+                            </label>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- BOTÓN SELECCIONAR TODO -->
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="btnSeleccionarTodo">
+                            <i data-lucide="check-square" style="width: 14px; height: 14px;"></i>
+                            Seleccionar Todo
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnLimpiar">
+                            <i data-lucide="x-square" style="width: 14px; height: 14px;"></i>
+                            Limpiar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i data-lucide="x" style="width: 16px; height: 16px;"></i>
+                    Cancelar
+                </button>
+                <button type="submit" form="formPDF" class="btn btn-danger">
+                    <i data-lucide="download" style="width: 16px; height: 16px;"></i>
+                    Descargar PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
+        
+        // Funcionalidad del modal
+        const btnSeleccionarTodo = document.getElementById('btnSeleccionarTodo');
+        const btnLimpiar = document.getElementById('btnLimpiar');
+        const checkboxes = document.querySelectorAll('.seccion-opcional');
+        
+        // Seleccionar todo
+        if (btnSeleccionarTodo) {
+            btnSeleccionarTodo.addEventListener('click', function() {
+                checkboxes.forEach(cb => cb.checked = true);
+            });
+        }
+        
+        // Limpiar selección
+        if (btnLimpiar) {
+            btnLimpiar.addEventListener('click', function() {
+                checkboxes.forEach(cb => cb.checked = false);
+            });
+        }
+        
+        // Recrear iconos cuando se abre el modal
+        const modalPDF = document.getElementById('modalPDF');
+        if (modalPDF) {
+            modalPDF.addEventListener('shown.bs.modal', function() {
+                lucide.createIcons();
+            });
+        }
     });
 </script>
 {% endblock %}
