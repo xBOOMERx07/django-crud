@@ -18,60 +18,68 @@
     
     <div class="row mb-5">
         <div class="col-12">
-            <div class="card text-center shadow-sm">
+            <div class="card shadow-sm">
                 <div class="card-body p-5">
-                    {% if datos_personales.foto_perfil %}
-                    <img src="{{ datos_personales.foto_perfil.url }}" alt="Foto de perfil" 
-                         style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent-cyan); margin-bottom: 1.5rem;">
-                    {% else %}
-                    <div style="width: 150px; height: 150px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
-                        <i data-lucide="user" style="width: 80px; height: 80px; color: white;"></i>
-                    </div>
-                    {% endif %}
-                    
-                    <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">{{ datos_personales.nombre_completo }}</h1>
-                    
-                    {% if datos_personales.descripcion_perfil %}
-                    <p style="font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 2rem;">{{ datos_personales.descripcion_perfil }}</p>
-                    {% endif %}
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-4">
-                            <i data-lucide="mail" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
-                            <span class="ms-2">{{ datos_personales.email_personal|default:"No especificado" }}</span>
+                    <div class="row align-items-center">
+                        <!-- COLUMNA IZQUIERDA: FOTO -->
+                        <div class="col-md-4 text-center mb-4 mb-md-0">
+                            {% if datos_personales.foto_perfil %}
+                            <img src="{{ datos_personales.foto_perfil.url }}" alt="Foto de perfil" 
+                                 style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 5px solid var(--accent-cyan); box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
+                            {% else %}
+                            <div style="width: 250px; height: 250px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple)); margin: 0 auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 16px rgba(0,0,0,0.1);">
+                                <i data-lucide="user" style="width: 120px; height: 120px; color: white;"></i>
+                            </div>
+                            {% endif %}
                         </div>
-                        <div class="col-md-4">
-                            <i data-lucide="phone" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
-                            <span class="ms-2">{{ datos_personales.telefono_convencional|default:"No especificado" }}</span>
+                        
+                        <!-- COLUMNA DERECHA: INFO -->
+                        <div class="col-md-8">
+                            <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">{{ datos_personales.nombre_completo }}</h1>
+                            
+                            {% if datos_personales.descripcion_perfil %}
+                            <p style="font-size: 1.5rem; color: var(--text-secondary); margin-bottom: 2rem;">{{ datos_personales.descripcion_perfil }}</p>
+                            {% endif %}
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6 mb-3">
+                                    <i data-lucide="mail" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
+                                    <span class="ms-2">{{ datos_personales.email_personal|default:"No especificado" }}</span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <i data-lucide="phone" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
+                                    <span class="ms-2">{{ datos_personales.telefono_convencional|default:"No especificado" }}</span>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <i data-lucide="map-pin" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
+                                    <span class="ms-2">{{ datos_personales.lugar_nacimiento|default:"Ecuador" }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 d-flex gap-3 flex-wrap">
+                                {% if datos_personales.linkedin_url %}
+                                <a href="{{ datos_personales.linkedin_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i data-lucide="linkedin" style="width: 16px; height: 16px;"></i> LinkedIn
+                                </a>
+                                {% endif %}
+                                {% if datos_personales.github_url %}
+                                <a href="{{ datos_personales.github_url }}" target="_blank" class="btn btn-outline-dark btn-sm">
+                                    <i data-lucide="github" style="width: 16px; height: 16px;"></i> GitHub
+                                </a>
+                                {% endif %}
+                                {% if datos_personales.portfolio_url %}
+                                <a href="{{ datos_personales.portfolio_url }}" target="_blank" class="btn btn-outline-success btn-sm">
+                                    <i data-lucide="globe" style="width: 16px; height: 16px;"></i> Portafolio
+                                </a>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mt-4">
+                                <a href="{% url 'descargar_pdf' username %}" target="_blank" class="btn btn-danger btn-lg shadow">
+                                    <i data-lucide="file-down"></i> Descargar CV en PDF
+                                </a>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <i data-lucide="map-pin" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
-                            <span class="ms-2">{{ datos_personales.lugar_nacimiento|default:"Ecuador" }}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-4 d-flex justify-content-center gap-3">
-                        {% if datos_personales.linkedin_url %}
-                        <a href="{{ datos_personales.linkedin_url }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                            <i data-lucide="linkedin" style="width: 16px; height: 16px;"></i> LinkedIn
-                        </a>
-                        {% endif %}
-                        {% if datos_personales.github_url %}
-                        <a href="{{ datos_personales.github_url }}" target="_blank" class="btn btn-outline-dark btn-sm">
-                            <i data-lucide="github" style="width: 16px; height: 16px;"></i> GitHub
-                        </a>
-                        {% endif %}
-                        {% if datos_personales.portfolio_url %}
-                        <a href="{{ datos_personales.portfolio_url }}" target="_blank" class="btn btn-outline-success btn-sm">
-                            <i data-lucide="globe" style="width: 16px; height: 16px;"></i> Portafolio
-                        </a>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mt-4">
-                        <a href="{% url 'descargar_pdf' username %}" target="_blank" class="btn btn-danger btn-lg shadow">
-                            <i data-lucide="file-down"></i> Descargar CV en PDF
-                        </a>
                     </div>
                 </div>
             </div>
