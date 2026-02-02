@@ -47,7 +47,7 @@
         <table>
             <tr>
                 <td><strong>Cédula:</strong> {{ datos_personales.numero_cedula }}</td>
-                <td><strong>Nacimiento:</strong> {{ datos_personales.fecha_nacimiento|date:"d/m/Y" }} ({{ datos_personales.edad }} años)</td>
+                <td><strong>Nacimiento:</strong> {{ datos_personales.fecha_nacimiento|date:"d/m/Y" }}{% if datos_personales.edad %} ({{ datos_personales.edad }} años){% endif %}</td>
             </tr>
             <tr>
                 <td><strong>Estado Civil:</strong> {{ datos_personales.estado_civil }}</td>
@@ -56,6 +56,11 @@
             {% if datos_personales.nivel_educacion %}
             <tr>
                 <td colspan="2"><strong>Nivel de Educación:</strong> {{ datos_personales.get_nivel_educacion_display }}</td>
+            </tr>
+            {% endif %}
+            {% if datos_personales.direccion_domiciliaria %}
+            <tr>
+                <td colspan="2"><strong>Dirección Domiciliaria:</strong> {{ datos_personales.direccion_domiciliaria }}</td>
             </tr>
             {% endif %}
         </table>

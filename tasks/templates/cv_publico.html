@@ -59,8 +59,17 @@
                                     <i data-lucide="phone" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
                                     <span class="ms-2">{{ datos_personales.telefono_convencional|default:"No especificado" }}</span>
                                 </div>
+                                
+                                <!-- 📍 DIRECCIÓN DOMICILIARIA COMPLETA -->
+                                {% if datos_personales.direccion_domiciliaria %}
                                 <div class="col-md-12 mb-3">
                                     <i data-lucide="map-pin" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
+                                    <span class="ms-2"><strong>Dirección:</strong> {{ datos_personales.direccion_domiciliaria }}</span>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="col-md-12 mb-3">
+                                    <i data-lucide="globe" style="width: 20px; height: 20px; vertical-align: middle; color: var(--accent-cyan);"></i>
                                     <span class="ms-2">{{ datos_personales.lugar_nacimiento|default:"Ecuador" }}</span>
                                 </div>
                             </div>
@@ -127,6 +136,9 @@
                         <div class="col-md-6 mb-3">
                             <strong><i data-lucide="calendar" style="width: 18px; height: 18px;"></i> Nacimiento:</strong>
                             <span class="ms-2">{{ datos_personales.fecha_nacimiento|date:"d/m/Y" }}</span>
+                            {% if datos_personales.edad %}
+                            <span class="text-muted">({{ datos_personales.edad }} años)</span>
+                            {% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
                             <strong><i data-lucide="heart" style="width: 18px; height: 18px;"></i> Estado Civil:</strong>
@@ -142,6 +154,14 @@
                         <div class="col-md-12 mb-3">
                             <strong><i data-lucide="graduation-cap" style="width: 18px; height: 18px;"></i> Nivel de Educación:</strong>
                             <span class="ms-2">{{ datos_personales.get_nivel_educacion_display }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- 📍 DIRECCIÓN COMPLETA EN INFORMACIÓN PERSONAL -->
+                        {% if datos_personales.direccion_domiciliaria %}
+                        <div class="col-md-12 mb-3">
+                            <strong><i data-lucide="home" style="width: 18px; height: 18px;"></i> Dirección Domiciliaria:</strong>
+                            <span class="ms-2">{{ datos_personales.direccion_domiciliaria }}</span>
                         </div>
                         {% endif %}
                     </div>

@@ -112,17 +112,22 @@ def signout(request):
 # ==========================================
 @login_required
 def editar_datos_personales(request):
-    # Obtener o preparar para crear datos personales
-    datos = DatosPersonales.objects.filter(user=request.user).first()
+    """
+    Editar datos personales del usuario.
+    
+    ARREGLO: Se asegura que el formulario siempre tenga instance=datos
+    para que los campos se pre-llenen correctamente, incluyendo fecha_nacimiento.
+    """
+    # Obtener o crear datos personales
+    datos, created = DatosPersonales.objects.get_or_create(user=request.user)
     
     if request.method == 'POST':
         # Usar el formulario Django con los datos POST y archivos
         form = DatosPersonalesForm(request.POST, request.FILES, instance=datos)
         if form.is_valid():
-            # Guardar sin commitear para asignar el usuario
-            datos = form.save(commit=False)
-            datos.user = request.user
-            datos.save()
+            # Guardar (el usuario ya está asignado por get_or_create)
+            form.save()
+            messages.success(request, '✅ Datos guardados correctamente')
             return redirect('home')
         else:
             # Si hay errores, mostrar el formulario con errores
@@ -132,7 +137,7 @@ def editar_datos_personales(request):
                 'error': 'Por favor corrige los errores marcados.'
             })
     else:
-        # GET: Mostrar formulario vacío o con datos existentes
+        # GET: Mostrar formulario con datos existentes
         form = DatosPersonalesForm(instance=datos)
     
     return render(request, 'datos_personales/form.html', {
