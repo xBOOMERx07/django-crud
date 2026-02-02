@@ -241,6 +241,86 @@
     </div>
     {% endif %}
 
+    <!-- ========================================== -->
+    <!-- ✅ NUEVA SECCIÓN: PRODUCTOS ACADÉMICOS     -->
+    <!-- ========================================== -->
+    {% if productos_academicos %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="border-top: 5px solid #8b5cf6 !important;">
+                <div class="card-body">
+                    <h3 class="mb-4">
+                        <i data-lucide="book-open" style="width: 32px; height: 32px; vertical-align: middle; color: #8b5cf6;"></i>
+                        Productos Académicos
+                    </h3>
+                    {% for producto in productos_academicos %}
+                    <div class="mb-4 pb-4 border-bottom">
+                        <h5>{{ producto.nombre_recurso }}</h5>
+                        <p class="mb-2" style="color: #8b5cf6;">
+                            <strong>{{ producto.clasificador }}</strong>
+                            {% if producto.fecha_publicacion %}
+                            | {{ producto.fecha_publicacion|date:"M Y" }}
+                            {% endif %}
+                        </p>
+                        {% if producto.descripcion %}
+                        <p style="white-space: pre-line;">{{ producto.descripcion }}</p>
+                        {% endif %}
+                        
+                        {% if producto.url_publicacion %}
+                        <div class="mt-2">
+                            <a href="{{ producto.url_publicacion }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Ver Publicación
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ========================================== -->
+    <!-- ✅ NUEVA SECCIÓN: PRODUCTOS LABORALES      -->
+    <!-- ========================================== -->
+    {% if productos_laborales %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="border-top: 5px solid #10b981 !important;">
+                <div class="card-body">
+                    <h3 class="mb-4">
+                        <i data-lucide="briefcase" style="width: 32px; height: 32px; vertical-align: middle; color: #10b981;"></i>
+                        Productos Laborales
+                    </h3>
+                    {% for producto in productos_laborales %}
+                    <div class="mb-4 pb-4 border-bottom">
+                        <h5>{{ producto.nombre_producto }}</h5>
+                        <p class="mb-2" style="color: #10b981;">
+                            {% if producto.empresa_relacionada %}
+                            <strong><i data-lucide="building" style="width: 16px; height: 16px; vertical-align: middle;"></i> {{ producto.empresa_relacionada }}</strong>
+                            {% endif %}
+                            | {{ producto.fecha_producto|date:"M Y" }}
+                        </p>
+                        {% if producto.descripcion %}
+                        <p style="white-space: pre-line;">{{ producto.descripcion }}</p>
+                        {% endif %}
+                        
+                        {% if producto.url_producto %}
+                        <div class="mt-2">
+                            <a href="{{ producto.url_producto }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i> Ver Proyecto
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     {% if habilidades %}
     <div class="row mb-4">
         <div class="col-12">
@@ -262,6 +342,43 @@
                         </div>
                         {% endfor %}
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if reconocimientos %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm" style="border-top: 5px solid #f59e0b !important;">
+                <div class="card-body">
+                    <h3 class="mb-4">
+                        <i data-lucide="award" style="width: 32px; height: 32px; vertical-align: middle; color: #f59e0b;"></i>
+                        Reconocimientos
+                    </h3>
+                    {% for rec in reconocimientos %}
+                    <div class="mb-4 pb-4 border-bottom">
+                        <h5>{{ rec.tipo_reconocimiento }}</h5>
+                        <p class="mb-2" style="color: #f59e0b;">
+                            <strong>{{ rec.entidad_patrocinadora }}</strong> | {{ rec.fecha_reconocimiento|date:"M Y" }}
+                        </p>
+                        {% if rec.descripcion_reconocimiento %}
+                        <p style="white-space: pre-line;">{{ rec.descripcion_reconocimiento }}</p>
+                        {% endif %}
+                        
+                        {% if rec.ruta_certificado %}
+                        <div class="mt-2 d-flex gap-2">
+                            <a href="{{ rec.ruta_certificado.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i data-lucide="eye" style="width: 14px; height: 14px;"></i> Ver
+                            </a>
+                            <a href="{{ rec.ruta_certificado.url }}" download class="btn btn-sm btn-primary">
+                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Descargar
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -380,6 +497,7 @@
                         </div>
                         {% endif %}
                         
+                        <!-- ✅ NUEVO: PRODUCTOS ACADÉMICOS -->
                         {% if productos_academicos %}
                         <div class="form-check mb-2">
                             <input class="form-check-input seccion-opcional" type="checkbox" name="incluir_productos_academicos" id="checkProdAcademicos">
@@ -391,6 +509,7 @@
                         </div>
                         {% endif %}
                         
+                        <!-- ✅ NUEVO: PRODUCTOS LABORALES -->
                         {% if productos_laborales %}
                         <div class="form-check mb-2">
                             <input class="form-check-input seccion-opcional" type="checkbox" name="incluir_productos_laborales" id="checkProdLaborales">

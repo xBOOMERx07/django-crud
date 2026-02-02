@@ -34,8 +34,8 @@ def cv_publico(request, username):
     reconocimientos = Reconocimiento.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('fecha_reconocimiento')
     cursos = CursoRealizado.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('fecha_inicio')
     
-    productos_academicos = ProductoAcademico.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('fecha_publicacion')
-    productos_laborales = ProductoLaboral.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('fecha_producto')
+    productos_academicos = ProductoAcademico.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_publicacion')
+    productos_laborales = ProductoLaboral.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True).order_by('-fecha_producto')
     habilidades = Habilidad.objects.filter(user=usuario, activar_para_que_se_vea_en_front=True)
     direcciones = Direccion.objects.filter(user=usuario).order_by('-es_principal', 'tipo')
     
@@ -326,35 +326,84 @@ def eliminar_reconocimiento(request, pk):
 # ==========================================
 @login_required
 def lista_productos_academicos(request):
-    productos = ProductoAcademico.objects.filter(user=request.user).order_by('fecha_publicacion')
-    return render(request, 'productos_academicos/lista.html', {'productos': productos})
+    productos = ProductoAcademico.objects.filter(user=request.user).order_by('-fecha_publicacion')
+    return render(request, 'productos_academicos/lista.html', {'productos_academicos': productos})
 
 @login_required
 def crear_producto_academico(request):
+    """
+    ✅ CORREGIDO: Procesa inputs HTML manuales correctamente
+    """
     if request.method == 'POST':
-        form = ProductoAcademicoForm(request.POST)
-        if form.is_valid():
-            producto = form.save(commit=False)
-            producto.user = request.user
-            producto.save()
-            messages.success(request, '✅ Producto académico creado correctamente')
-            return redirect('lista_productos_academicos')
-    else:
-        form = ProductoAcademicoForm()
-    return render(request, 'productos_academicos/form.html', {'form': form, 'action': 'Crear'})
+        # 📝 Tomar datos directamente de request.POST (inputs HTML manuales)
+        nombre_recurso = request.POST.get('nombre_recurso', '').strip()
+        clasificador = request.POST.get('clasificador', '').strip()
+        descripcion = request.POST.get('descripcion', '').strip()
+        fecha_publicacion = request.POST.get('fecha_publicacion', '').strip()
+        url_publicacion = request.POST.get('url_publicacion', '').strip()
+        activar = request.POST.get('activar_para_que_se_vea_en_front') == 'on'
+        
+        # ✅ Validar campos obligatorios
+        if not nombre_recurso or not clasificador or not descripcion:
+            messages.error(request, '❌ Por favor completa todos los campos obligatorios')
+            return render(request, 'productos_academicos/form.html', {'action': 'Crear'})
+        
+        # ✅ Crear el producto académico
+        ProductoAcademico.objects.create(
+            user=request.user,
+            nombre_recurso=nombre_recurso,
+            clasificador=clasificador,
+            descripcion=descripcion,
+            fecha_publicacion=fecha_publicacion if fecha_publicacion else None,
+            url_publicacion=url_publicacion,
+            activar_para_que_se_vea_en_front=activar
+        )
+        
+        messages.success(request, '✅ Producto académico creado correctamente')
+        return redirect('lista_productos_academicos')
+    
+    return render(request, 'productos_academicos/form.html', {'action': 'Crear'})
 
 @login_required
 def editar_producto_academico(request, pk):
+    """
+    ✅ CORREGIDO: Procesa inputs HTML manuales correctamente
+    """
     producto = get_object_or_404(ProductoAcademico, pk=pk, user=request.user)
+    
     if request.method == 'POST':
-        form = ProductoAcademicoForm(request.POST, instance=producto)
-        if form.is_valid():
-            form.save()
-            messages.success(request, '✅ Producto académico actualizado correctamente')
-            return redirect('lista_productos_academicos')
-    else:
-        form = ProductoAcademicoForm(instance=producto)
-    return render(request, 'productos_academicos/form.html', {'form': form, 'action': 'Editar', 'producto': producto})
+        # 📝 Tomar datos directamente de request.POST
+        nombre_recurso = request.POST.get('nombre_recurso', '').strip()
+        clasificador = request.POST.get('clasificador', '').strip()
+        descripcion = request.POST.get('descripcion', '').strip()
+        fecha_publicacion = request.POST.get('fecha_publicacion', '').strip()
+        url_publicacion = request.POST.get('url_publicacion', '').strip()
+        activar = request.POST.get('activar_para_que_se_vea_en_front') == 'on'
+        
+        # ✅ Validar campos obligatorios
+        if not nombre_recurso or not clasificador or not descripcion:
+            messages.error(request, '❌ Por favor completa todos los campos obligatorios')
+            return render(request, 'productos_academicos/form.html', {
+                'action': 'Editar',
+                'producto': producto
+            })
+        
+        # ✅ Actualizar el producto
+        producto.nombre_recurso = nombre_recurso
+        producto.clasificador = clasificador
+        producto.descripcion = descripcion
+        producto.fecha_publicacion = fecha_publicacion if fecha_publicacion else None
+        producto.url_publicacion = url_publicacion
+        producto.activar_para_que_se_vea_en_front = activar
+        producto.save()
+        
+        messages.success(request, '✅ Producto académico actualizado correctamente')
+        return redirect('lista_productos_academicos')
+    
+    return render(request, 'productos_academicos/form.html', {
+        'action': 'Editar',
+        'producto': producto
+    })
 
 @login_required
 def eliminar_producto_academico(request, pk):
@@ -370,35 +419,84 @@ def eliminar_producto_academico(request, pk):
 # ==========================================
 @login_required
 def lista_productos_laborales(request):
-    productos = ProductoLaboral.objects.filter(user=request.user).order_by('fecha_producto')
-    return render(request, 'productos_laborales/lista.html', {'productos': productos})
+    productos = ProductoLaboral.objects.filter(user=request.user).order_by('-fecha_producto')
+    return render(request, 'productos_laborales/lista.html', {'productos_laborales': productos})
 
 @login_required
 def crear_producto_laboral(request):
+    """
+    ✅ CORREGIDO: Procesa inputs HTML manuales correctamente
+    """
     if request.method == 'POST':
-        form = ProductoLaboralForm(request.POST)
-        if form.is_valid():
-            producto = form.save(commit=False)
-            producto.user = request.user
-            producto.save()
-            messages.success(request, '✅ Producto laboral creado correctamente')
-            return redirect('lista_productos_laborales')
-    else:
-        form = ProductoLaboralForm()
-    return render(request, 'productos_laborales/form.html', {'form': form, 'action': 'Crear'})
+        # 📝 Tomar datos directamente de request.POST (inputs HTML manuales)
+        nombre_producto = request.POST.get('nombre_producto', '').strip()
+        fecha_producto = request.POST.get('fecha_producto', '').strip()
+        descripcion = request.POST.get('descripcion', '').strip()
+        empresa_relacionada = request.POST.get('empresa_relacionada', '').strip()
+        url_producto = request.POST.get('url_producto', '').strip()
+        activar = request.POST.get('activar_para_que_se_vea_en_front') == 'on'
+        
+        # ✅ Validar campos obligatorios
+        if not nombre_producto or not fecha_producto or not descripcion:
+            messages.error(request, '❌ Por favor completa todos los campos obligatorios')
+            return render(request, 'productos_laborales/form.html', {'action': 'Crear'})
+        
+        # ✅ Crear el producto laboral
+        ProductoLaboral.objects.create(
+            user=request.user,
+            nombre_producto=nombre_producto,
+            fecha_producto=fecha_producto,
+            descripcion=descripcion,
+            empresa_relacionada=empresa_relacionada,
+            url_producto=url_producto,
+            activar_para_que_se_vea_en_front=activar
+        )
+        
+        messages.success(request, '✅ Producto laboral creado correctamente')
+        return redirect('lista_productos_laborales')
+    
+    return render(request, 'productos_laborales/form.html', {'action': 'Crear'})
 
 @login_required
 def editar_producto_laboral(request, pk):
+    """
+    ✅ CORREGIDO: Procesa inputs HTML manuales correctamente
+    """
     producto = get_object_or_404(ProductoLaboral, pk=pk, user=request.user)
+    
     if request.method == 'POST':
-        form = ProductoLaboralForm(request.POST, instance=producto)
-        if form.is_valid():
-            form.save()
-            messages.success(request, '✅ Producto laboral actualizado correctamente')
-            return redirect('lista_productos_laborales')
-    else:
-        form = ProductoLaboralForm(instance=producto)
-    return render(request, 'productos_laborales/form.html', {'form': form, 'action': 'Editar', 'producto': producto})
+        # 📝 Tomar datos directamente de request.POST
+        nombre_producto = request.POST.get('nombre_producto', '').strip()
+        fecha_producto = request.POST.get('fecha_producto', '').strip()
+        descripcion = request.POST.get('descripcion', '').strip()
+        empresa_relacionada = request.POST.get('empresa_relacionada', '').strip()
+        url_producto = request.POST.get('url_producto', '').strip()
+        activar = request.POST.get('activar_para_que_se_vea_en_front') == 'on'
+        
+        # ✅ Validar campos obligatorios
+        if not nombre_producto or not fecha_producto or not descripcion:
+            messages.error(request, '❌ Por favor completa todos los campos obligatorios')
+            return render(request, 'productos_laborales/form.html', {
+                'action': 'Editar',
+                'producto': producto
+            })
+        
+        # ✅ Actualizar el producto
+        producto.nombre_producto = nombre_producto
+        producto.fecha_producto = fecha_producto
+        producto.descripcion = descripcion
+        producto.empresa_relacionada = empresa_relacionada
+        producto.url_producto = url_producto
+        producto.activar_para_que_se_vea_en_front = activar
+        producto.save()
+        
+        messages.success(request, '✅ Producto laboral actualizado correctamente')
+        return redirect('lista_productos_laborales')
+    
+    return render(request, 'productos_laborales/form.html', {
+        'action': 'Editar',
+        'producto': producto
+    })
 
 @login_required
 def eliminar_producto_laboral(request, pk):
@@ -514,13 +612,13 @@ def descargar_pdf(request, username):
         context['productos_academicos'] = ProductoAcademico.objects.filter(
             user=usuario, 
             activar_para_que_se_vea_en_front=True
-        ).order_by('fecha_publicacion')
+        ).order_by('-fecha_publicacion')
     
     if incluir_productos_laborales:
         context['productos_laborales'] = ProductoLaboral.objects.filter(
             user=usuario, 
             activar_para_que_se_vea_en_front=True
-        ).order_by('fecha_producto')
+        ).order_by('-fecha_producto')
     
     if incluir_habilidades:
         context['habilidades'] = Habilidad.objects.filter(
