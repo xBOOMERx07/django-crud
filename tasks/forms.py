@@ -285,22 +285,134 @@ class ReconocimientoForm(forms.ModelForm):
             }),
             'descripcion_reconocimiento': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 3
+                'rows': 3,
+                'placeholder': 'Describe el reconocimiento obtenido...'
             }),
             'entidad_patrocinadora': forms.TextInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'placeholder': 'Empresa u organización que otorga'
             }),
             'nombre_contacto_auspicia': forms.TextInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'placeholder': 'Nombre del contacto'
             }),
             'telefono_contacto_auspicia': forms.TextInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'placeholder': '0987654321'
             }),
             'activar_para_que_se_vea_en_front': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
             'ruta_certificado': forms.FileInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
+                'accept': '.pdf,.jpg,.png'
+            })
+        }
+
+
+# ==========================================
+# FORM: PRODUCTOS ACADÉMICOS
+# ==========================================
+class ProductoAcademicoForm(forms.ModelForm):
+    class Meta:
+        model = ProductoAcademico
+        exclude = ['user', 'fecha_creacion']
+        widgets = {
+            'nombre_recurso': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Título de la tesis, artículo o investigación'
+            }),
+            'clasificador': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Tipo: Tesis, Artículo, Paper, Investigación, etc.'
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe el contenido y objetivos del trabajo académico'
+            }),
+            'fecha_publicacion': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'url_publicacion': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://repositorio.edu.ec/handle/12345'
+            }),
+            'activar_para_que_se_vea_en_front': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            })
+        }
+
+
+# ==========================================
+# FORM: PRODUCTOS LABORALES
+# ==========================================
+class ProductoLaboralForm(forms.ModelForm):
+    class Meta:
+        model = ProductoLaboral
+        exclude = ['user', 'fecha_creacion']
+        widgets = {
+            'nombre_producto': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Sistema de Inventario, Campaña de Marketing, etc.'
+            }),
+            'fecha_producto': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe el proyecto y tus responsabilidades'
+            }),
+            'empresa_relacionada': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nombre de la empresa (opcional)'
+            }),
+            'url_producto': forms.URLInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'https://demo-proyecto.com'
+            }),
+            'activar_para_que_se_vea_en_front': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            })
+        }
+
+
+# ==========================================
+# FORM: VENTA GARAGE
+# ==========================================
+class VentaGarageForm(forms.ModelForm):
+    class Meta:
+        model = VentaGarage
+        exclude = ['user', 'fecha_creacion', 'fecha_actualizacion']
+        widgets = {
+            'nombre_producto': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Laptop HP, Bicicleta de Montaña, etc.'
+            }),
+            'estado_producto': forms.Select(attrs={'class': 'form-control'}),
+            'descripcion': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Describe el producto, estado, características...'
+            }),
+            'valor_del_bien': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': '150.00',
+                'step': '0.01',
+                'min': '0.01'
+            }),
+            'foto_producto': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'activar_para_que_se_vea_en_front': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+            'vendido': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
             })
         }
 

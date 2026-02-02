@@ -107,6 +107,59 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 🏆 RECONOCIMIENTOS (NUEVO) -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i data-lucide="award" style="width: 48px; height: 48px; color: #fbbf24;"></i>
+                            </div>
+                            <h5 class="card-title">Reconocimientos</h5>
+                            <p class="card-text">Gestiona premios, menciones y reconocimientos académicos o laborales.</p>
+                            <a href="{% url 'lista_reconocimientos' %}" class="btn btn-primary w-100 mt-3">
+                                <i data-lucide="trophy" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Administrar ({{ total_reconocimientos }})
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 📚 PRODUCTOS ACADÉMICOS (NUEVO) -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i data-lucide="book" style="width: 48px; height: 48px; color: #8b5cf6;"></i>
+                            </div>
+                            <h5 class="card-title">Productos Académicos</h5>
+                            <p class="card-text">Publicaciones, papers, investigaciones y recursos educativos.</p>
+                            <a href="{% url 'lista_productos_academicos' %}" class="btn btn-primary w-100 mt-3">
+                                <i data-lucide="file-text" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Administrar ({{ total_productos_academicos }})
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 📦 PRODUCTOS LABORALES (NUEVO) -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i data-lucide="package" style="width: 48px; height: 48px; color: #10b981;"></i>
+                            </div>
+                            <h5 class="card-title">Productos Laborales</h5>
+                            <p class="card-text">Proyectos, aplicaciones y productos desarrollados en el trabajo.</p>
+                            <a href="{% url 'lista_productos_laborales' %}" class="btn btn-primary w-100 mt-3">
+                                <i data-lucide="box" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Administrar ({{ total_productos_laborales }})
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Venta Garage -->
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100" style="border-bottom: 4px solid #f59e0b;">
                         <div class="card-body">

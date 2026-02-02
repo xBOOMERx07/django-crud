@@ -6,63 +6,61 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h1>
-                    <i data-lucide="book" style="width: 40px; height: 40px; vertical-align: middle;"></i>
-                    Cursos Realizados
+                    <i data-lucide="book-open" style="width: 40px; height: 40px; vertical-align: middle;"></i>
+                    Productos Académicos
                 </h1>
                 <div>
                     <a href="{% url 'home' %}" class="btn btn-secondary me-2">
                         <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
                         Volver
                     </a>
-                    <a href="{% url 'crear_curso' %}" class="btn btn-primary">
+                    <a href="{% url 'crear_producto_academico' %}" class="btn btn-primary">
                         <i data-lucide="plus" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                        Nuevo Curso
+                        Nuevo Producto Académico
                     </a>
                 </div>
             </div>
 
-            {% if cursos %}
+            {% if productos_academicos %}
                 <div class="row g-4">
-                    {% for curso in cursos %}
+                    {% for producto in productos_academicos %}
                     <div class="col-md-6">
                         <div class="card h-100">
                             <div class="card-body">
                                 <div class="d-flex align-items-start mb-3">
                                     <div class="me-3">
-                                        <i data-lucide="book" style="width: 48px; height: 48px; color: var(--accent-cyan);"></i>
+                                        <i data-lucide="book-open" style="width: 48px; height: 48px; color: #8b5cf6;"></i>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h4 class="card-title mb-2">{{ curso.nombre_curso }}</h4>
-                                        <h6 style="color: var(--text-secondary);">
-                                            <i data-lucide="building" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                            {{ curso.entidad_patrocinadora }}
-                                        </h6>
+                                        <h4 class="card-title mb-2">{{ producto.nombre_recurso }}</h4>
+                                        <span class="badge" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6;">
+                                            {{ producto.clasificador }}
+                                        </span>
                                     </div>
                                 </div>
                                 
-                                <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">
-                                    <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                    {{ curso.fecha_inicio|date:"d/m/Y" }} 
-                                    {% if curso.fecha_fin %}
-                                        - {{ curso.fecha_fin|date:"d/m/Y" }}
-                                    {% endif %}
-                                </p>
-                                
                                 <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                                    <i data-lucide="clock" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                                    {{ curso.total_horas }} horas
+                                    <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    {{ producto.fecha_publicacion|date:"F Y" }}
                                 </p>
                                 
-                                {% if curso.descripcion_curso %}
-                                    <p class="mb-3">{{ curso.descripcion_curso|truncatewords:20 }}</p>
+                                {% if producto.descripcion %}
+                                    <p class="mb-3">{{ producto.descripcion|truncatewords:25 }}</p>
+                                {% endif %}
+                                
+                                {% if producto.url_publicacion %}
+                                    <a href="{{ producto.url_publicacion }}" target="_blank" class="btn btn-sm btn-outline-primary mb-3">
+                                        <i data-lucide="external-link" style="width: 14px; height: 14px; vertical-align: middle;"></i>
+                                        Ver Publicación
+                                    </a>
                                 {% endif %}
                                 
                                 <div class="d-flex gap-2 mt-3">
-                                    <a href="{% url 'editar_curso' curso.id %}" class="btn btn-primary btn-sm flex-grow-1">
+                                    <a href="{% url 'editar_producto_academico' producto.id %}" class="btn btn-primary btn-sm flex-grow-1">
                                         <i data-lucide="edit" style="width: 14px; height: 14px; vertical-align: middle;"></i>
                                         Editar
                                     </a>
-                                    <a href="{% url 'eliminar_curso' curso.id %}" class="btn btn-danger btn-sm">
+                                    <a href="{% url 'eliminar_producto_academico' producto.id %}" class="btn btn-danger btn-sm">
                                         <i data-lucide="trash-2" style="width: 14px; height: 14px; vertical-align: middle;"></i>
                                         Eliminar
                                     </a>
@@ -75,12 +73,12 @@
             {% else %}
                 <div class="card">
                     <div class="card-body text-center py-5">
-                        <i data-lucide="book" style="width: 64px; height: 64px; color: var(--text-secondary); margin-bottom: 1rem;"></i>
-                        <h4 style="color: var(--text-secondary);">No hay cursos registrados</h4>
-                        <p style="color: var(--text-secondary);">Agrega tus cursos, talleres y certificaciones profesionales.</p>
-                        <a href="{% url 'crear_curso' %}" class="btn btn-primary mt-3">
+                        <i data-lucide="book-open" style="width: 64px; height: 64px; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                        <h4 style="color: var(--text-secondary);">No hay productos académicos registrados</h4>
+                        <p style="color: var(--text-secondary);">Agrega tesis, artículos, investigaciones y publicaciones académicas.</p>
+                        <a href="{% url 'crear_producto_academico' %}" class="btn btn-primary mt-3">
                             <i data-lucide="plus" style="width: 16px; height: 16px; vertical-align: middle;"></i>
-                            Agregar Primer Curso
+                            Agregar Primer Producto Académico
                         </a>
                     </div>
                 </div>

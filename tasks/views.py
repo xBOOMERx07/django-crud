@@ -15,7 +15,10 @@ from .models import (
     Reconocimiento, CursoRealizado, ProductoAcademico,
     ProductoLaboral, VentaGarage, Habilidad
 )
-from .forms import DatosPersonalesForm
+from .forms import (
+    DatosPersonalesForm, ExperienciaLaboralForm, CursoRealizadoForm,
+    HabilidadForm, ReconocimientoForm, ProductoAcademicoForm, ProductoLaboralForm
+)
 
 # ==========================================
 # VISTA PÚBLICA DEL CV
@@ -65,6 +68,9 @@ def home(request):
             'total_experiencias': ExperienciaLaboral.objects.filter(user=request.user).count(),
             'total_cursos': CursoRealizado.objects.filter(user=request.user).count(),
             'total_habilidades': Habilidad.objects.filter(user=request.user).count(),
+            'total_reconocimientos': Reconocimiento.objects.filter(user=request.user).count(),
+            'total_productos_academicos': ProductoAcademico.objects.filter(user=request.user).count(),
+            'total_productos_laborales': ProductoLaboral.objects.filter(user=request.user).count(),
             'total_ventas': VentaGarage.objects.filter(user=request.user, vendido=False).count(),
         }
         return render(request, 'home.html', context)
@@ -75,6 +81,9 @@ def home(request):
             'total_experiencias': 0,
             'total_cursos': 0,
             'total_habilidades': 0,
+            'total_reconocimientos': 0,
+            'total_productos_academicos': 0,
+            'total_productos_laborales': 0,
             'total_ventas': 0,
         })
 
@@ -112,32 +121,22 @@ def signout(request):
 # ==========================================
 @login_required
 def editar_datos_personales(request):
-    """
-    Editar datos personales del usuario.
-    
-    ARREGLO: Se asegura que el formulario siempre tenga instance=datos
-    para que los campos se pre-llenen correctamente, incluyendo fecha_nacimiento.
-    """
-    # Obtener o crear datos personales
+    """Editar datos personales del usuario."""
     datos, created = DatosPersonales.objects.get_or_create(user=request.user)
     
     if request.method == 'POST':
-        # Usar el formulario Django con los datos POST y archivos
         form = DatosPersonalesForm(request.POST, request.FILES, instance=datos)
         if form.is_valid():
-            # Guardar (el usuario ya está asignado por get_or_create)
             form.save()
             messages.success(request, '✅ Datos guardados correctamente')
             return redirect('home')
         else:
-            # Si hay errores, mostrar el formulario con errores
             return render(request, 'datos_personales/form.html', {
                 'form': form,
                 'datos': datos,
                 'error': 'Por favor corrige los errores marcados.'
             })
     else:
-        # GET: Mostrar formulario con datos existentes
         form = DatosPersonalesForm(instance=datos)
     
     return render(request, 'datos_personales/form.html', {
@@ -147,35 +146,46 @@ def editar_datos_personales(request):
 
 
 # ==========================================
-# GESTIÓN: EXPERIENCIAS
+# GESTIÓN: EXPERIENCIAS LABORALES
 # ==========================================
 @login_required
 def lista_experiencias(request):
-    # 🔄 Orden cronológico ASCENDENTE
     experiencias = ExperienciaLaboral.objects.filter(user=request.user).order_by('fecha_inicio_gestion')
     return render(request, 'experiencias/lista.html', {'experiencias': experiencias})
 
 @login_required
 def crear_experiencia(request):
     if request.method == 'POST':
-        ExperienciaLaboral.objects.create(
-            user=request.user,
-            cargo_desempenado=request.POST.get('cargo_desempenado'),
-            nombre_empresa=request.POST.get('nombre_empresa'),
-            fecha_inicio_gestion=request.POST.get('fecha_inicio_gestion'),
-            fecha_fin_gestion=request.POST.get('fecha_fin_gestion') or None,
-            actualmente_trabajando=request.POST.get('actualmente_trabajando') == 'on',
-            descripcion_funciones=request.POST.get('descripcion_funciones', ''),
-            activar_para_que_se_vea_en_front=request.POST.get('activar_para_que_se_vea_en_front') == 'on',
-        )
-        return redirect('lista_experiencias')
-    return render(request, 'experiencias/form.html', {'action': 'Crear'})
+        form = ExperienciaLaboralForm(request.POST, request.FILES)
+        if form.is_valid():
+            exp = form.save(commit=False)
+            exp.user = request.user
+            exp.save()
+            messages.success(request, '✅ Experiencia creada correctamente')
+            return redirect('lista_experiencias')
+    else:
+        form = ExperienciaLaboralForm()
+    return render(request, 'experiencias/form.html', {'form': form, 'action': 'Crear'})
+
+@login_required
+def editar_experiencia(request, pk):
+    exp = get_object_or_404(ExperienciaLaboral, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = ExperienciaLaboralForm(request.POST, request.FILES, instance=exp)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Experiencia actualizada correctamente')
+            return redirect('lista_experiencias')
+    else:
+        form = ExperienciaLaboralForm(instance=exp)
+    return render(request, 'experiencias/form.html', {'form': form, 'action': 'Editar', 'objeto': exp})
 
 @login_required
 def eliminar_experiencia(request, pk):
     exp = get_object_or_404(ExperienciaLaboral, pk=pk, user=request.user)
     if request.method == 'POST':
         exp.delete()
+        messages.success(request, '✅ Experiencia eliminada correctamente')
         return redirect('lista_experiencias')
     return render(request, 'confirmar_eliminar.html', {'objeto': exp, 'tipo': 'Experiencia'})
 
@@ -184,25 +194,44 @@ def eliminar_experiencia(request, pk):
 # ==========================================
 @login_required
 def lista_cursos(request):
-    # 🔄 Orden cronológico ASCENDENTE
     cursos = CursoRealizado.objects.filter(user=request.user).order_by('fecha_inicio')
     return render(request, 'cursos/lista.html', {'cursos': cursos})
 
 @login_required
 def crear_curso(request):
     if request.method == 'POST':
-        CursoRealizado.objects.create(
-            user=request.user,
-            nombre_curso=request.POST.get('nombre_curso'),
-            entidad_patrocinadora=request.POST.get('entidad_patrocinadora'),
-            fecha_inicio=request.POST.get('fecha_inicio'),
-            fecha_fin=request.POST.get('fecha_fin') or None,
-            total_horas=int(request.POST.get('total_horas', 1)),
-            descripcion_curso=request.POST.get('descripcion_curso', ''),
-            activar_para_que_se_vea_en_front=request.POST.get('activar_para_que_se_vea_en_front') == 'on',
-        )
+        form = CursoRealizadoForm(request.POST, request.FILES)
+        if form.is_valid():
+            curso = form.save(commit=False)
+            curso.user = request.user
+            curso.save()
+            messages.success(request, '✅ Curso creado correctamente')
+            return redirect('lista_cursos')
+    else:
+        form = CursoRealizadoForm()
+    return render(request, 'cursos/form.html', {'form': form, 'action': 'Crear'})
+
+@login_required
+def editar_curso(request, pk):
+    curso = get_object_or_404(CursoRealizado, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = CursoRealizadoForm(request.POST, request.FILES, instance=curso)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Curso actualizado correctamente')
+            return redirect('lista_cursos')
+    else:
+        form = CursoRealizadoForm(instance=curso)
+    return render(request, 'cursos/form.html', {'form': form, 'action': 'Editar', 'objeto': curso})
+
+@login_required
+def eliminar_curso(request, pk):
+    curso = get_object_or_404(CursoRealizado, pk=pk, user=request.user)
+    if request.method == 'POST':
+        curso.delete()
+        messages.success(request, '✅ Curso eliminado correctamente')
         return redirect('lista_cursos')
-    return render(request, 'cursos/form.html', {'action': 'Crear'})
+    return render(request, 'confirmar_eliminar.html', {'objeto': curso, 'tipo': 'Curso'})
 
 # ==========================================
 # GESTIÓN: HABILIDADES
@@ -215,23 +244,170 @@ def lista_habilidades(request):
 @login_required
 def crear_habilidad(request):
     if request.method == 'POST':
-        Habilidad.objects.create(
-            user=request.user,
-            nombre=request.POST.get('nombre'),
-            nivel=request.POST.get('nivel', 'basico'),
-            categoria=request.POST.get('categoria', ''),
-            activar_para_que_se_vea_en_front=request.POST.get('activar_para_que_se_vea_en_front') == 'on',
-        )
-        return redirect('lista_habilidades')
-    return render(request, 'habilidades/form.html', {'action': 'Crear'})
+        form = HabilidadForm(request.POST)
+        if form.is_valid():
+            hab = form.save(commit=False)
+            hab.user = request.user
+            hab.save()
+            messages.success(request, '✅ Habilidad creada correctamente')
+            return redirect('lista_habilidades')
+    else:
+        form = HabilidadForm()
+    return render(request, 'habilidades/form.html', {'form': form, 'action': 'Crear'})
+
+@login_required
+def editar_habilidad(request, pk):
+    hab = get_object_or_404(Habilidad, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = HabilidadForm(request.POST, instance=hab)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Habilidad actualizada correctamente')
+            return redirect('lista_habilidades')
+    else:
+        form = HabilidadForm(instance=hab)
+    return render(request, 'habilidades/form.html', {'form': form, 'action': 'Editar', 'objeto': hab})
 
 @login_required
 def eliminar_habilidad(request, pk):
     hab = get_object_or_404(Habilidad, pk=pk, user=request.user)
     if request.method == 'POST':
         hab.delete()
+        messages.success(request, '✅ Habilidad eliminada correctamente')
         return redirect('lista_habilidades')
     return render(request, 'confirmar_eliminar.html', {'objeto': hab, 'tipo': 'Habilidad'})
+
+# ==========================================
+# GESTIÓN: RECONOCIMIENTOS
+# ==========================================
+@login_required
+def lista_reconocimientos(request):
+    reconocimientos = Reconocimiento.objects.filter(user=request.user).order_by('fecha_reconocimiento')
+    return render(request, 'reconocimientos/lista.html', {'reconocimientos': reconocimientos})
+
+@login_required
+def crear_reconocimiento(request):
+    if request.method == 'POST':
+        form = ReconocimientoForm(request.POST, request.FILES)
+        if form.is_valid():
+            rec = form.save(commit=False)
+            rec.user = request.user
+            rec.save()
+            messages.success(request, '✅ Reconocimiento creado correctamente')
+            return redirect('lista_reconocimientos')
+    else:
+        form = ReconocimientoForm()
+    return render(request, 'reconocimientos/form.html', {'form': form, 'action': 'Crear'})
+
+@login_required
+def editar_reconocimiento(request, pk):
+    rec = get_object_or_404(Reconocimiento, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = ReconocimientoForm(request.POST, request.FILES, instance=rec)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Reconocimiento actualizado correctamente')
+            return redirect('lista_reconocimientos')
+    else:
+        form = ReconocimientoForm(instance=rec)
+    return render(request, 'reconocimientos/form.html', {'form': form, 'action': 'Editar', 'objeto': rec})
+
+@login_required
+def eliminar_reconocimiento(request, pk):
+    rec = get_object_or_404(Reconocimiento, pk=pk, user=request.user)
+    if request.method == 'POST':
+        rec.delete()
+        messages.success(request, '✅ Reconocimiento eliminado correctamente')
+        return redirect('lista_reconocimientos')
+    return render(request, 'confirmar_eliminar.html', {'objeto': rec, 'tipo': 'Reconocimiento'})
+
+# ==========================================
+# GESTIÓN: PRODUCTOS ACADÉMICOS
+# ==========================================
+@login_required
+def lista_productos_academicos(request):
+    productos = ProductoAcademico.objects.filter(user=request.user).order_by('fecha_publicacion')
+    return render(request, 'productos_academicos/lista.html', {'productos': productos})
+
+@login_required
+def crear_producto_academico(request):
+    if request.method == 'POST':
+        form = ProductoAcademicoForm(request.POST)
+        if form.is_valid():
+            producto = form.save(commit=False)
+            producto.user = request.user
+            producto.save()
+            messages.success(request, '✅ Producto académico creado correctamente')
+            return redirect('lista_productos_academicos')
+    else:
+        form = ProductoAcademicoForm()
+    return render(request, 'productos_academicos/form.html', {'form': form, 'action': 'Crear'})
+
+@login_required
+def editar_producto_academico(request, pk):
+    producto = get_object_or_404(ProductoAcademico, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = ProductoAcademicoForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Producto académico actualizado correctamente')
+            return redirect('lista_productos_academicos')
+    else:
+        form = ProductoAcademicoForm(instance=producto)
+    return render(request, 'productos_academicos/form.html', {'form': form, 'action': 'Editar', 'producto': producto})
+
+@login_required
+def eliminar_producto_academico(request, pk):
+    prod = get_object_or_404(ProductoAcademico, pk=pk, user=request.user)
+    if request.method == 'POST':
+        prod.delete()
+        messages.success(request, '✅ Producto académico eliminado correctamente')
+        return redirect('lista_productos_academicos')
+    return render(request, 'confirmar_eliminar.html', {'objeto': prod, 'tipo': 'Producto Académico'})
+
+# ==========================================
+# GESTIÓN: PRODUCTOS LABORALES
+# ==========================================
+@login_required
+def lista_productos_laborales(request):
+    productos = ProductoLaboral.objects.filter(user=request.user).order_by('fecha_producto')
+    return render(request, 'productos_laborales/lista.html', {'productos': productos})
+
+@login_required
+def crear_producto_laboral(request):
+    if request.method == 'POST':
+        form = ProductoLaboralForm(request.POST)
+        if form.is_valid():
+            producto = form.save(commit=False)
+            producto.user = request.user
+            producto.save()
+            messages.success(request, '✅ Producto laboral creado correctamente')
+            return redirect('lista_productos_laborales')
+    else:
+        form = ProductoLaboralForm()
+    return render(request, 'productos_laborales/form.html', {'form': form, 'action': 'Crear'})
+
+@login_required
+def editar_producto_laboral(request, pk):
+    producto = get_object_or_404(ProductoLaboral, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = ProductoLaboralForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '✅ Producto laboral actualizado correctamente')
+            return redirect('lista_productos_laborales')
+    else:
+        form = ProductoLaboralForm(instance=producto)
+    return render(request, 'productos_laborales/form.html', {'form': form, 'action': 'Editar', 'producto': producto})
+
+@login_required
+def eliminar_producto_laboral(request, pk):
+    prod = get_object_or_404(ProductoLaboral, pk=pk, user=request.user)
+    if request.method == 'POST':
+        prod.delete()
+        messages.success(request, '✅ Producto laboral eliminado correctamente')
+        return redirect('lista_productos_laborales')
+    return render(request, 'confirmar_eliminar.html', {'objeto': prod, 'tipo': 'Producto Laboral'})
 
 # ==========================================
 # GESTIÓN: VENTA GARAGE
@@ -255,6 +431,7 @@ def crear_venta_garage(request):
         if request.FILES.get('foto_producto'):
             producto.foto_producto = request.FILES['foto_producto']
             producto.save()
+        messages.success(request, '✅ Producto creado correctamente')
         return redirect('lista_ventas_garage')
     return render(request, 'venta_garage/form.html', {'action': 'Crear', 'producto': None})
 
@@ -271,6 +448,7 @@ def editar_venta_garage(request, pk):
         if request.FILES.get('foto_producto'):
             producto.foto_producto = request.FILES['foto_producto']
         producto.save()
+        messages.success(request, '✅ Producto actualizado correctamente')
         return redirect('lista_ventas_garage')
     return render(request, 'venta_garage/form.html', {'action': 'Editar', 'producto': producto})
 
@@ -279,6 +457,7 @@ def eliminar_venta_garage(request, pk):
     producto = get_object_or_404(VentaGarage, pk=pk, user=request.user)
     if request.method == 'POST':
         producto.delete()
+        messages.success(request, '✅ Producto eliminado correctamente')
         return redirect('lista_ventas_garage')
     return render(request, 'confirmar_eliminar.html', {'objeto': producto, 'tipo': 'Producto'})
 
@@ -286,17 +465,7 @@ def eliminar_venta_garage(request, pk):
 # 📄 GENERAR PDF DINÁMICO CON SECCIONES SELECCIONADAS
 # ==========================================
 def descargar_pdf(request, username):
-    """
-    Genera un PDF personalizado con las secciones seleccionadas por el usuario.
-    
-    Parámetros GET esperados:
-    - incluir_experiencias: 'on' si se debe incluir
-    - incluir_cursos: 'on' si se debe incluir
-    - incluir_reconocimientos: 'on' si se debe incluir
-    - incluir_productos_academicos: 'on' si se debe incluir
-    - incluir_productos_laborales: 'on' si se debe incluir
-    - incluir_habilidades: 'on' si se debe incluir
-    """
+    """Genera un PDF personalizado con las secciones seleccionadas por el usuario."""
     usuario = get_object_or_404(User, username=username)
     datos_personales = DatosPersonales.objects.filter(user=usuario, perfil_activo=True).first()
     

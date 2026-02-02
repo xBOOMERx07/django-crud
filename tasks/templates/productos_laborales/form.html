@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="mb-4">
+                <a href="{% url 'lista_productos_laborales' %}" class="btn btn-secondary">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                    Volver a Productos Laborales
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i data-lucide="briefcase" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                        {% if producto %}Editar{% else %}Nuevo{% endif %} Producto Laboral
+                    </h2>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_nombre_producto" class="form-label">
+                                <i data-lucide="file-text" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Nombre del Producto/Proyecto *
+                            </label>
+                            <input type="text" 
+                                   name="nombre_producto" 
+                                   id="id_nombre_producto"
+                                   class="form-control" 
+                                   placeholder="Sistema de Inventario, Campaña de Marketing Digital"
+                                   maxlength="200"
+                                   required
+                                   value="{% if producto %}{{ producto.nombre_producto }}{% endif %}">
+                            <small class="text-muted">Ej: Sistema de Inventario, Campaña de Marketing Digital</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_fecha_producto" class="form-label">
+                                <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Fecha de Realización *
+                            </label>
+                            <input type="date" 
+                                   name="fecha_producto" 
+                                   id="id_fecha_producto"
+                                   class="form-control"
+                                   required
+                                   value="{% if producto and producto.fecha_producto %}{{ producto.fecha_producto|date:'Y-m-d' }}{% endif %}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_descripcion" class="form-label">
+                                <i data-lucide="align-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Descripción *
+                            </label>
+                            <textarea name="descripcion" 
+                                      id="id_descripcion"
+                                      class="form-control" 
+                                      rows="4"
+                                      placeholder="Describe el proyecto y tus responsabilidades"
+                                      required>{% if producto %}{{ producto.descripcion }}{% endif %}</textarea>
+                            <small class="text-muted">Describe el proyecto y tus responsabilidades</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_empresa_relacionada" class="form-label">
+                                    <i data-lucide="building" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Empresa Relacionada
+                                </label>
+                                <input type="text" 
+                                       name="empresa_relacionada" 
+                                       id="id_empresa_relacionada"
+                                       class="form-control"
+                                       placeholder="Nombre de la empresa"
+                                       maxlength="100"
+                                       value="{% if producto %}{{ producto.empresa_relacionada }}{% endif %}">
+                                <small class="text-muted">Empresa donde realizaste este trabajo</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_url_producto" class="form-label">
+                                    <i data-lucide="link" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    URL del Producto
+                                </label>
+                                <input type="url" 
+                                       name="url_producto" 
+                                       id="id_url_producto"
+                                       class="form-control"
+                                       placeholder="https://demo-proyecto.com"
+                                       value="{% if producto %}{{ producto.url_producto }}{% endif %}">
+                                <small class="text-muted">Link al proyecto o demo</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" 
+                                       name="activar_para_que_se_vea_en_front" 
+                                       id="id_activar_para_que_se_vea_en_front"
+                                       class="form-check-input"
+                                       {% if producto and producto.activar_para_que_se_vea_en_front %}checked{% endif %}>
+                                <label class="form-check-label" for="id_activar_para_que_se_vea_en_front">
+                                    Mostrar en CV público
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                Guardar Producto Laboral
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

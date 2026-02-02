@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="mb-4">
+                <a href="{% url 'lista_productos_academicos' %}" class="btn btn-secondary">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                    Volver a Productos Académicos
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i data-lucide="book-open" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                        {% if producto %}Editar{% else %}Nuevo{% endif %} Producto Académico
+                    </h2>
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_nombre_recurso" class="form-label">
+                                <i data-lucide="file-text" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Nombre del Recurso *
+                            </label>
+                            <input type="text" 
+                                   name="nombre_recurso" 
+                                   id="id_nombre_recurso"
+                                   class="form-control" 
+                                   placeholder="Título de la publicación, tesis o artículo"
+                                   maxlength="200"
+                                   required
+                                   value="{% if producto %}{{ producto.nombre_recurso }}{% endif %}">
+                            <small class="text-muted">Título de la publicación, tesis o artículo</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_clasificador" class="form-label">
+                                <i data-lucide="layers" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Clasificador/Tipo *
+                            </label>
+                            <input type="text" 
+                                   name="clasificador" 
+                                   id="id_clasificador"
+                                   class="form-control" 
+                                   placeholder="Ej: Tesis, Artículo, Paper, Investigación"
+                                   maxlength="100"
+                                   required
+                                   value="{% if producto %}{{ producto.clasificador }}{% endif %}">
+                            <small class="text-muted">Ej: Tesis, Artículo, Paper, Investigación</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_descripcion" class="form-label">
+                                <i data-lucide="align-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Descripción *
+                            </label>
+                            <textarea name="descripcion" 
+                                      id="id_descripcion"
+                                      class="form-control" 
+                                      rows="4"
+                                      placeholder="Resume el contenido y objetivos del trabajo académico"
+                                      required>{% if producto %}{{ producto.descripcion }}{% endif %}</textarea>
+                            <small class="text-muted">Resume el contenido y objetivos del trabajo</small>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_fecha_publicacion" class="form-label">
+                                    <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    Fecha de Publicación
+                                </label>
+                                <input type="date" 
+                                       name="fecha_publicacion" 
+                                       id="id_fecha_publicacion"
+                                       class="form-control"
+                                       value="{% if producto and producto.fecha_publicacion %}{{ producto.fecha_publicacion|date:'Y-m-d' }}{% endif %}">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="id_url_publicacion" class="form-label">
+                                    <i data-lucide="link" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                    URL de Publicación
+                                </label>
+                                <input type="url" 
+                                       name="url_publicacion" 
+                                       id="id_url_publicacion"
+                                       class="form-control"
+                                       placeholder="https://repositorio.edu.ec/handle/12345"
+                                       value="{% if producto %}{{ producto.url_publicacion }}{% endif %}">
+                                <small class="text-muted">Link al documento o publicación</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input type="checkbox" 
+                                       name="activar_para_que_se_vea_en_front" 
+                                       id="id_activar_para_que_se_vea_en_front"
+                                       class="form-check-input"
+                                       {% if producto and producto.activar_para_que_se_vea_en_front %}checked{% endif %}>
+                                <label class="form-check-label" for="id_activar_para_que_se_vea_en_front">
+                                    Mostrar en CV público
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                Guardar Producto Académico
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}

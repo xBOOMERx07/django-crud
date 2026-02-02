@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="mb-4">
+                <a href="{% url 'lista_reconocimientos' %}" class="btn btn-secondary">
+                    <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                    Volver a Reconocimientos
+                </a>
+            </div>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    <h2 class="mb-4">
+                        <i data-lucide="trophy" style="width: 36px; height: 36px; vertical-align: middle;"></i>
+                        {% if reconocimiento %}Editar{% else %}Nuevo{% endif %} Reconocimiento
+                    </h2>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.tipo_reconocimiento.id_for_label }}" class="form-label">
+                                <i data-lucide="award" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Tipo de Reconocimiento *
+                            </label>
+                            {{ form.tipo_reconocimiento }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.entidad_patrocinadora.id_for_label }}" class="form-label">
+                                <i data-lucide="building" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Entidad que Otorga *
+                            </label>
+                            {{ form.entidad_patrocinadora }}
+                            <small class="text-muted">Nombre de la empresa o institución</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.fecha_reconocimiento.id_for_label }}" class="form-label">
+                                <i data-lucide="calendar" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Fecha de Obtención *
+                            </label>
+                            {{ form.fecha_reconocimiento }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.descripcion_reconocimiento.id_for_label }}" class="form-label">
+                                <i data-lucide="file-text" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Descripción *
+                            </label>
+                            {{ form.descripcion_reconocimiento }}
+                            <small class="text-muted">Describe el motivo del reconocimiento</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.nombre_contacto_auspicia.id_for_label }}" class="form-label">
+                                <i data-lucide="user" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Contacto
+                            </label>
+                            {{ form.nombre_contacto_auspicia }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.telefono_contacto_auspicia.id_for_label }}" class="form-label">
+                                <i data-lucide="phone" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Teléfono de Contacto
+                            </label>
+                            {{ form.telefono_contacto_auspicia }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.ruta_certificado.id_for_label }}" class="form-label">
+                                <i data-lucide="file" style="width: 16px; height: 16px; vertical-align: middle;"></i>
+                                Certificado (PDF/Imagen)
+                            </label>
+                            {{ form.ruta_certificado }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-check">
+                                {{ form.activar_para_que_se_vea_en_front }}
+                                <label class="form-check-label" for="{{ form.activar_para_que_se_vea_en_front.id_for_label }}">
+                                    Mostrar en CV público
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i data-lucide="save" style="width: 20px; height: 20px; vertical-align: middle;"></i>
+                                Guardar Reconocimiento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        lucide.createIcons();
+    });
+</script>
+{% endblock %}
